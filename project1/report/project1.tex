@@ -1,0 +1,84 @@
+\documentclass{article}
+
+\usepackage{siunitx}
+\usepackage{amsmath}
+\frenchspacing
+
+\title{Project 1}
+\author{Josh Bradt}
+\date{February 12, 2016}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+    Efficiently solving differential equations is essential to many problems in computational science. One particularly frequent class of differential equations are linear second-order differential equations, which can be written as
+    \begin{equation}
+        \frac{d^2 y}{dx^2} + k(x) y = f(x)  \label{eq:diffeq}
+    \end{equation}
+    for some source function $f(x)$ and a real function $k(x)$.
+
+    One example of an equation of this form is found in classical electrostatics. There, the electric field of a point charge can be found using Poisson's equation:
+    \begin{equation}
+        \nabla^2 \Phi(\mathbf{r}) = -4\pi \rho(\mathbf{r})  \label{eq:poisson}
+    \end{equation}
+    where $\rho(\mathbf{r})$ is the charge distribution. Assuming spherical symmetry, this becomes a one-dimensional equation
+    \begin{equation*}
+        \frac{1}{r^2} \frac{d}{dr} \left( r^2 \frac{d\Phi}{dr} \right) = -4\pi\rho(r)
+    \end{equation*}
+    which can be written as
+    \begin{equation*}
+        \frac{d^2\phi}{dr^2} = -4\pi r \rho(r)
+    \end{equation*}
+    by letting $\Phi(r) = \phi(r) / r$. This is now a linear second-order differential equation of the form shown in (\ref{eq:diffeq}) where $k(r) = 0$ and $f(r) = -4\pi r \rho(r)$. To simplify things further, let $r \rightarrow x$ and $\phi \rightarrow u$, and then define $f(x) = -4\pi x \rho(x)$. Then our equation becomes
+    \begin{equation*}
+        -u''(x) = f(x)
+    \end{equation*}
+    Equations of this form can occasionally be solved analytically, but in general they must be solved using numerical methods.
+
+\section{Numerical algorithm}
+
+    To make the problem more concrete, we will be solving the equation
+    \begin{equation}
+        -u''(x) = f(x)  \label{eq:simple}
+    \end{equation}
+    on the domain $x \in [0, 1]$ with Dirichlet boundary conditions $u(0) = u(1) = 0$.
+
+    The second derivative can be found using the second-order finite difference relation
+    \begin{equation}
+        u''(x) \approx \frac{u(x+h) + u(x-h) - 2u(x)}{h^2} + O(h^2)  \label{eq:finite}
+    \end{equation}
+    for some small step size $h$. Plugging this relation into (\ref{eq:simple}) produces the equation
+    \begin{equation}
+        -\frac{u(x+h) + u(x-h) - 2u(x)}{h^2} = f(x).
+    \end{equation}
+    Next, we discretize the problem by creating a mesh of step size $h$ between the lower and upper boundaries. This is conceptually the same as representing the functions $u(x)$ and $f(x)$ as vectors $u_i$ and $f_i$. Thus, we can write
+    \begin{equation}
+        -\frac{u_{i+1} + u_{i-1} - 2u_i}{h^2} = f_i, \quad i = 1, \dots, n.
+    \end{equation}
+    Thinking of $u$ and $f$ as vectors, this can be interpreted as taking the $(i+1)$-th element of $u$, the $(i-1)$-th element of $u$, and so on. This leads to a natural interpretation of this equation in terms of a set of linear equations
+    \begin{equation}
+        \begin{pmatrix}
+             2 & -1 &        &        &    \\
+            -1 &  2 & -1     &        &    \\
+               & -1 & \ddots & \ddots &    \\
+               &    & \ddots & \ddots & -1 \\
+               &    &        & -1     &  2
+        \end{pmatrix}
+        \begin{pmatrix}
+            u_1 \\ u_2 \\ u_3 \\ \vdots \\ u_n
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
+            w_1 \\ w_2 \\ w_3 \\ \vdots \\ w_n
+        \end{pmatrix}
+    \end{equation}
+    where $w_i \equiv h^2 f_i$, and all elements not shown in the matrix are taken to be zero. This is a \emph{tridiagonal} matrix, meaning it has elements only on the primary diagonal and on the diagonals above and below it.
+
+    % \subsection{Gaussian elimination}
+
+        
+
+\end{document}
