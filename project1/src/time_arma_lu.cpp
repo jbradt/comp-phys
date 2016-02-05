@@ -4,22 +4,44 @@
 #include <algorithm>
 #include <numeric>
 
+#include <armadillo>
 #include "solver.h"
 
-int main()
+int main(const int argc, const char** argv)
 {
     namespace chr = std::chrono;
 
-    unsigned long numPts = 100000;
-    int numIters = 20;
+    unsigned long numPts = 1000;
+    int numIters = 10;
+    double stepSize = findStepSize(0, 1, numPts);
+
+    if (argc >= 2) {
+        numPts = std::stoul(argv[1]);
+    }
+
+    arma::mat A (numPts, numPts, arma::fill::zeros);
+    A.diag(0).fill(2);
+    A.diag(1).fill(-1);
+    A.diag(-1).fill(-1);
+
+    arma::vec sourceVec (numPts);
+    for (size_t i = 1; i < numPts; i++) {
+        sourceVec(i) = sourceFunction(i*stepSize) * stepSize * stepSize;
+    }
+
+    arma::vec x (numPts);
+    arma::vec y (numPts);
 
     std::vector<chr::high_resolution_clock::duration> durations;
 
-    for (int i = -1; i < numIters; i++) {
+    for (int iter = -1; iter < numIters; iter++) {
+        arma::mat L, U;
         auto begin = chr::high_resolution_clock::now();
-        std::vector<double> result = solveEquation(sourceFunction, numPts);
+        arma::lu(L, U, A);
+        y = arma::solve(L, sourceVec);
+        x = arma::solve(U, y);
         auto end = chr::high_resolution_clock::now();
-        if (i >= 0) durations.push_back(end - begin);
+        if (iter >= 0) durations.push_back(end - begin);
     }
 
     std::sort(durations.begin(), durations.end());

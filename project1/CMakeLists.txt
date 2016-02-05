@@ -21,3 +21,9 @@ target_link_libraries(test_solver solver)
 
 add_executable(time_solver src/timing.cpp)
 target_link_libraries(time_solver solver)
+
+find_package(Armadillo)
+if(ARMADILLO_FOUND)
+    add_executable(time_arma_lu src/time_arma_lu.cpp)
+    target_link_libraries(time_arma_lu ${ARMADILLO_LIBRARIES} solver)
+endif()
