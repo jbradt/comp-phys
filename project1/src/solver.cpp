@@ -17,12 +17,12 @@ std::vector<double> solveEquation(const std::function<double(double)>& f, const 
     const double stepSize = findStepSize(0, 1, numPts);
     std::vector<double> bs (numPts + 2, 2);
     std::vector<double> ws (numPts + 2, 0);
-    for (size_t i = 1; i < numPts; i++) {
+    for (size_t i = 1; i < numPts + 1; i++) {
         ws.at(i) = f(i*stepSize) * stepSize * stepSize;
     }
 
     // Forward substitution
-    for (size_t i = 1; i < numPts; i++) {
+    for (size_t i = 1; i < numPts + 1; i++) {
         double factor = a / bs.at(i-1);
         bs.at(i) -= factor * c;
         ws.at(i) -= factor * ws.at(i-1);

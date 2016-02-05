@@ -26,4 +26,7 @@ find_package(Armadillo)
 if(ARMADILLO_FOUND)
     add_executable(time_arma_lu src/time_arma_lu.cpp)
     target_link_libraries(time_arma_lu ${ARMADILLO_LIBRARIES} solver)
+
+    add_executable(arma_lu src/arma_lu.cpp)
+    target_link_libraries(arma_lu ${ARMADILLO_LIBRARIES} solver)
 endif()
