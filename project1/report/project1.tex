@@ -1,7 +1,12 @@
 \documentclass{article}
 
+% \usepackage{fullpage}
+
 \usepackage{siunitx}
 \usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \frenchspacing
 
 \title{Project 1}
@@ -46,39 +51,189 @@
     \end{equation}
     on the domain $x \in [0, 1]$ with Dirichlet boundary conditions $u(0) = u(1) = 0$.
 
-    The second derivative can be found using the second-order finite difference relation
-    \begin{equation}
-        u''(x) \approx \frac{u(x+h) + u(x-h) - 2u(x)}{h^2} + O(h^2)  \label{eq:finite}
-    \end{equation}
-    for some small step size $h$. Plugging this relation into (\ref{eq:simple}) produces the equation
-    \begin{equation}
-        -\frac{u(x+h) + u(x-h) - 2u(x)}{h^2} = f(x).
-    \end{equation}
-    Next, we discretize the problem by creating a mesh of step size $h$ between the lower and upper boundaries. This is conceptually the same as representing the functions $u(x)$ and $f(x)$ as vectors $u_i$ and $f_i$. Thus, we can write
-    \begin{equation}
-        -\frac{u_{i+1} + u_{i-1} - 2u_i}{h^2} = f_i, \quad i = 1, \dots, n.
-    \end{equation}
-    Thinking of $u$ and $f$ as vectors, this can be interpreted as taking the $(i+1)$-th element of $u$, the $(i-1)$-th element of $u$, and so on. This leads to a natural interpretation of this equation in terms of a set of linear equations
-    \begin{equation}
-        \begin{pmatrix}
-             2 & -1 &        &        &    \\
-            -1 &  2 & -1     &        &    \\
-               & -1 & \ddots & \ddots &    \\
-               &    & \ddots & \ddots & -1 \\
-               &    &        & -1     &  2
-        \end{pmatrix}
-        \begin{pmatrix}
-            u_1 \\ u_2 \\ u_3 \\ \vdots \\ u_n
-        \end{pmatrix}
-        =
-        \begin{pmatrix}
-            w_1 \\ w_2 \\ w_3 \\ \vdots \\ w_n
-        \end{pmatrix}
-    \end{equation}
-    where $w_i \equiv h^2 f_i$, and all elements not shown in the matrix are taken to be zero. This is a \emph{tridiagonal} matrix, meaning it has elements only on the primary diagonal and on the diagonals above and below it.
+    \subsection{Transformation to linear equations}
 
-    % \subsection{Gaussian elimination}
+        The second derivative can be found using the second-order finite difference relation
+        \begin{equation}
+            u''(x) \approx \frac{u(x+h) + u(x-h) - 2u(x)}{h^2} + O(h^2)  \label{eq:finite}
+        \end{equation}
+        for some small step size $h$. Plugging this relation into (\ref{eq:simple}) produces the equation
+        \begin{equation}
+            -\frac{u(x+h) + u(x-h) - 2u(x)}{h^2} = f(x).
+        \end{equation}
+        Next, we discretize the problem by creating a mesh of step size $h$ between the lower and upper boundaries. This is conceptually the same as representing the functions $u(x)$ and $f(x)$ as vectors $u_i$ and $f_i$. Thus, we can write
+        \begin{equation}
+            -\frac{u_{i+1} + u_{i-1} - 2u_i}{h^2} = f_i, \quad i = 1, \dots, n.
+        \end{equation}
+        Thinking of $u$ and $f$ as vectors, this can be interpreted as taking the $(i+1)$-th element of $u$, the $(i-1)$-th element of $u$, and so on. This leads to a natural interpretation of this equation in terms of a set of linear equations
+        \begin{equation}
+            \begin{pmatrix}
+                 2 & -1 &        &        &    \\
+                -1 &  2 & -1     &        &    \\
+                   & -1 & \ddots & \ddots &    \\
+                   &    & \ddots & \ddots & -1 \\
+                   &    &        & -1     &  2
+            \end{pmatrix}
+            \begin{pmatrix}
+                u_1 \\ u_2 \\ u_3 \\ \vdots \\ u_n
+            \end{pmatrix}
+            =
+            \begin{pmatrix}
+                w_1 \\ w_2 \\ w_3 \\ \vdots \\ w_n
+            \end{pmatrix}
+            \label{eq:oursystem}
+        \end{equation}
+        where $w_i \equiv h^2 f_i$, and all elements not shown in the matrix are taken to be zero. This is a \emph{tridiagonal} matrix, meaning it has elements only on the primary diagonal and on the diagonals above and below it.
 
-        
+        Rewriting the problem in this way turns the relatively difficult task of solving a differential equation into the well-studied task of solving a system of linear equations.
+
+    \subsection{General Gaussian elimination}
+
+        One of the most basic and well-known methods for solving linear equations is the method of Gaussian elimination. Solving a system of equations in this method consists of two steps: forward substitution and backward substitution.
+
+        Starting with a general matrix
+        \begin{equation*}
+            \begin{pmatrix}
+                a_{11} & a_{12} & a_{13} & a_{14} & w_1 \\
+                a_{21} & a_{22} & a_{23} & a_{24} & w_2 \\
+                a_{31} & a_{32} & a_{33} & a_{34} & w_3 \\
+                a_{41} & a_{42} & a_{43} & a_{44} & w_4 \\
+            \end{pmatrix}
+        \end{equation*}
+        with the solution vector $\mathbf{w}$ appended as the last column, the forward substitution step consists of adding multiples of each row to the rows below it until the matrix becomes upper-triangular. Thus, after one substitution, the original matrix above becomes
+        \begin{equation*}
+            \begin{pmatrix}
+                a_{11} & a_{12}  & a_{13}  & a_{14}  & w_1 \\
+                0      & a'_{22} & a'_{23} & a'_{24} & w'_2 \\
+                0      & a'_{32} & a'_{33} & a'_{34} & w'_3 \\
+                0      & a'_{42} & a'_{43} & a'_{44} & w'_4 \\
+            \end{pmatrix}, \text{ where }
+            \begin{dcases}
+                a'_{ij} &= a_{ij} - \frac{a_{i1}}{a_{11}} a_{1j} \\
+                w'_i    &= w_i - \frac{a_{i1}}{a_{11}} w_1
+            \end{dcases}.
+        \end{equation*}
+        After a second substitution, it becomes
+        \begin{equation*}
+            \begin{pmatrix}
+                a_{11} & a_{12}  & a_{13}   & a_{14}   & w_1   \\
+                0      & a'_{22} & a'_{23}  & a'_{24}  & w'_2  \\
+                0      & 0       & a''_{33} & a''_{34} & w''_3 \\
+                0      & 0       & a''_{43} & a''_{44} & w''_4 \\
+            \end{pmatrix}, \text{ where }
+            \begin{dcases}
+                a''_{ij} &= a'_{ij} - \frac{a'_{i2}}{a'_{22}} a'_{2j} \\
+                w''_i    &= w'_i - \frac{a'_{i2}}{a'_{22}} w'_2
+            \end{dcases}.
+        \end{equation*}
+        Finally, after a third substitution, we have
+        \begin{equation*}
+            \begin{pmatrix}
+                a_{11} & a_{12}  & a_{13}   & a_{14}    & w_1   \\
+                0      & a'_{22} & a'_{23}  & a'_{24}   & w'_2  \\
+                0      & 0       & a''_{33} & a''_{34}  & w''_3 \\
+                0      & 0       & 0        & a'''_{44} & w'''_4 \\
+            \end{pmatrix}, \text{ where }
+            \begin{dcases}
+                a'''_{ij} &= a''_{ij} - \frac{a''_{i3}}{a''_{33}} a''_{3j} \\
+                w'''_i    &= w''_i - \frac{a''_{i3}}{a''_{33}} w''_3
+            \end{dcases}.
+        \end{equation*}
+
+        This pattern is described in pseudocode in Algorithm~\ref{algo:gausforward}. In this formation, the variable $k$ represents the index of the row currently being subtracted from the other rows, and $i$ and $j$ represent the row and column being operated on. The multiplicative factor is computed once per row and stored in $C$ for efficiency.
+
+        \begin{algorithm}
+            \begin{algorithmic}
+                \Require $a$ is an $N \times N$ array
+                \Require $w$ is a length-$N$ vector
+                \For {$k = 0, 1, \dots, N - 1$}
+                    \For {$i = k + 1, k+2, \dots, N$}
+                        \State $C \gets a_{ik} / a_{kk}$
+                        \State $w_i \gets w_i - C w_k$
+                        \For {$j = k, k+1, \dots, N$}
+                            \State $a_{ij} \gets a_{ij} - C a_{kj}$
+                        \EndFor
+                    \EndFor
+                \EndFor
+            \end{algorithmic}
+            \caption{Gaussian elimination forward substitution}
+            \label{algo:gausforward}
+        \end{algorithm}
+
+        Once the forward-substitution step is complete, we proceed with backward substitution to fully diagonalize the matrix. This process only affects the solution vector $\mathbf{w}$. In the following steps, assume the $b_{ij}$ are the elements of the matrix after forward substitution is complete, and the $v_i$ are the elements of the solution vector after forward substitution.
+
+        First, after one step of backward substitution, we have
+        \begin{equation*}
+            \begin{pmatrix}
+                b_{11} & b_{12}  & b_{13}   & 0      & v'_1 \\
+                0      & b_{22}  & b_{23}   & 0      & v'_2 \\
+                0      & 0       & b_{33}   & 0      & v'_3 \\
+                0      & 0       & 0        & b_{44} & v_4  \\
+            \end{pmatrix}, \text{ where }
+            v'_i = v_i - \frac{b_{i4}}{b_{44}} v_4 .
+        \end{equation*}
+        After a second step, this becomes
+        \begin{equation*}
+            \begin{pmatrix}
+                b_{11} & b_{12}  & 0        & 0      & v''_1 \\
+                0      & b_{22}  & 0        & 0      & v''_2 \\
+                0      & 0       & b_{33}   & 0      & v'_3  \\
+                0      & 0       & 0        & b_{44} & v_4   \\
+            \end{pmatrix}, \text{ where }
+            v''_i = v'_i - \frac{b_{i3}}{b_{33}} v'_3 .
+        \end{equation*}
+        And finally, the last step produces
+        \begin{equation*}
+            \begin{pmatrix}
+                b_{11} & 0       & 0        & 0      & v'''_1 \\
+                0      & b_{22}  & 0        & 0      & v''_2 \\
+                0      & 0       & b_{33}   & 0      & v'_3  \\
+                0      & 0       & 0        & b_{44} & v_4   \\
+            \end{pmatrix}, \text{ where }
+            v'''_i = v''_i - \frac{b_{i2}}{b_{22}} v''_3 .
+        \end{equation*}
+        At this point, the system of equations is clearly solved.
+
+        This backward substitution process is described in Algorithm~\ref{algo:gausback}.
+
+        \begin{algorithm}[t]
+            \begin{algorithmic}
+                \Require $b$ is an $N \times N$ array
+                \Require $v$ is a length-$N$ vector
+                \For {$k = N, N-1, \dots, 1$}
+                    \For {$i = k - 1, k - 2, \dots, 0$}
+                        \State $C \gets b_{ik} / b_{kk}$
+                        \State $v_i \gets v_i - C v_k$
+                    \EndFor
+                \EndFor
+            \end{algorithmic}
+            \caption{Gaussian elimination backward substitution}
+            \label{algo:gausback}
+        \end{algorithm}
+
+        This is clearly not the most computationally efficient algorithm for solving a system of equations. By inspecting the algorithm, we can see that the forward substitution step scales as $O(n^3)$, while the backward substitution step scales as $O(n^2)$. A more efficient method for solving our particular problem will be outlined in the next section.
+
+    \subsection{A specialized algorithm}
+
+        In Equation~\ref{eq:oursystem}, we showed that the equation that we're actually trying to solve consists of a tridiagonal matrix. This means that most of the elements are zeros, and the remaining elements only take one of two constant values. Therefore, if we use the general algorithm described in the previous section, it will mostly be wasting time repeating the same calculations. Additionally, it's a waste of memory to represent the equation using a dense matrix, and it may become impossible to do so as the step size gets smaller.
+
+        A more efficient way to represent the matrix is as three
+
+        \begin{algorithm}
+            \begin{algorithmic}
+                \Require {$a, c$ are constants equal to the upper and lower diagonals}
+                \Require {$b$ is a length-$N$ vector representing the diagonal elements}
+                \For {$i = 1, 2, \dots, N$} \Comment {Forward substitution}
+                    \State $M \gets a / b_{i-1}$
+                    \State $b_i \gets b_i - Mc$
+                    \State $w_i \gets w_i - Mw_{i-1}$
+                \EndFor
+                \For {$i = N-1, N-2, \dots, 0$} \Comment {Backward substitution}
+                    \State $w_i \gets w_i - \frac{c}{b_{i+1}} w_{i+1}$
+                \EndFor
+            \end{algorithmic}
+            \caption{A specialized Gaussian solver}
+        \end{algorithm}
+
 
 \end{document}
