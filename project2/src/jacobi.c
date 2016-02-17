@@ -2,16 +2,17 @@
 
 #define ind(i,j,n) n*j+i
 
-double offdiag(const double* mat, const size_t matSize, size_t p, size_t q)
+double offdiag(const double* mat, const size_t matSize, size_t* p, size_t* q)
 {
     double max = 0;
     for (size_t i = 0; i < matSize; i++) {
         for (size_t j = i + 1; j < matSize; j++) {
+            assert(i != j);
             double mat_ij = fabs(mat[ind(i,j,matSize)]);
             if (mat_ij > max) {
                 max = mat_ij;
-                p = i;
-                q = j;
+                *p = i;
+                *q = j;
             }
         }
     }
@@ -68,7 +69,9 @@ void jacobiSolve(double* mat, double* eigvec, const size_t matSize, const double
 {
     for (unsigned i = 0; i < maxIter; i++) {
         size_t p = 0, q = 0;
-        if(offdiag(mat, matSize, p, q) < tol) {
+        double maxOffdiagEl = offdiag(mat, matSize, &p, &q);
+        assert(p != q);
+        if(maxOffdiagEl < tol) {
             break;
         }
         else {
