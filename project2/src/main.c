@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
+#include <string.h>
 
 #include "jacobi.h"
 
@@ -34,9 +35,9 @@ int main(const int argc, const char** argv)
     }
 
     double maxRho = atof(argv[1]);
-    int matSize = atoi(argv[2]);
+    size_t matSize = (size_t) atoi(argv[2]);
     double tol = atof(argv[3]);
-    unsigned maxIter = atoi(argv[4]);
+    unsigned maxIter = (unsigned) atoi(argv[4]);
 
     double stepSize = maxRho / matSize;
 
@@ -68,9 +69,38 @@ int main(const int argc, const char** argv)
         eigvec[ind(i,i,matSize)] = 1;
     }
 
-    jacobiSolve(mat, eigvec, matSize, tol, maxIter);
+    unsigned itersDone = jacobiSolve(mat, eigvec, matSize, tol, maxIter);
+    printf("Finished in %u iterations.\n", itersDone);
 
-    printMat(mat, matSize, matSize);
+    // printMat(mat, matSize, matSize);
+
+    FILE* outfile;
+
+    outfile = fopen("eigval.csv", "w");
+    if (outfile != NULL) {
+        fprintf(outfile, "rho,result\n");
+        for (size_t i = 0; i < matSize; i++) {
+            fprintf(outfile, "%0.8e,%0.8e\n", i*stepSize, mat[ind(i,i,matSize)]);
+        }
+        fclose(outfile);
+    }
+    else {
+        printf("Failed to open output file.\n");
+    }
+
+    outfile = fopen("eigvec.csv", "w");
+    if (outfile != NULL) {
+        for (size_t i = 0; i < matSize; i++) {
+            for (size_t j = 0; j < matSize; j++) {
+                char term = (j < matSize - 1) ? ',' : '\n';
+                fprintf(outfile, "%0.8e%c", mat[ind(i,j,matSize)], term);
+            }
+        }
+        fclose(outfile);
+    }
+    else {
+        printf("Failed to open output file.\n");
+    }
 
     free(mat);
     free(eigvec);
