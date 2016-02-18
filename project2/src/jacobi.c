@@ -65,17 +65,18 @@ void jacobiRot(double* mat, double* eigvec, const size_t matSize, const size_t p
     mat[ind(q,p,matSize)] = 0;
 }
 
-void jacobiSolve(double* mat, double* eigvec, const size_t matSize, const double tol, const unsigned maxIter)
+unsigned jacobiSolve(double* mat, double* eigvec, const size_t matSize, const double tol, const unsigned maxIter)
 {
     for (unsigned i = 0; i < maxIter; i++) {
         size_t p = 0, q = 0;
         double maxOffdiagEl = offdiag(mat, matSize, &p, &q);
         assert(p != q);
         if(maxOffdiagEl < tol) {
-            break;
+            return i;
         }
         else {
             jacobiRot(mat, eigvec, matSize, p, q);
         }
     }
+    return maxIter;
 }
