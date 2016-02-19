@@ -14,3 +14,5 @@ if(ARMADILLO_FOUND)
     add_executable(armaSolve src/armaSolve.cpp)
     target_link_libraries(armaSolve ${ARMADILLO_LIBRARIES})
 endif()
+
+add_executable(test_jacobi_eig src/test_jacobi_eig.c src/jacobi.c)

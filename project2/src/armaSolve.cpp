@@ -27,7 +27,7 @@ int main(const int argc, const char** argv)
     // Fill matrices
     for (arma::uword i = 0; i < matSize; i++) {
         // Main diagonal elements
-        double rho = i * stepSize;
+        double rho = (i+1) * stepSize;
         double pot = potential(rho);
         mat(i,i) = (2 / (stepSize * stepSize)) + pot;
 

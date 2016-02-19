@@ -54,7 +54,7 @@ int main(const int argc, const char** argv)
     // Fill matrices
     for (size_t i = 0; i < matSize; i++) {
         // Main diagonal elements
-        double rho = i * stepSize;
+        double rho = (i+1) * stepSize;
         double pot = potential(rho);
         mat[ind(i,i,matSize)] = (2 / (stepSize * stepSize)) + pot;
 
@@ -93,7 +93,7 @@ int main(const int argc, const char** argv)
         for (size_t i = 0; i < matSize; i++) {
             for (size_t j = 0; j < matSize; j++) {
                 char term = (j < matSize - 1) ? ',' : '\n';
-                fprintf(outfile, "%0.8e%c", mat[ind(i,j,matSize)], term);
+                fprintf(outfile, "%0.8e%c", eigvec[ind(i,j,matSize)], term);
             }
         }
         fclose(outfile);
