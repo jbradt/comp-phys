@@ -1,4 +1,5 @@
 #include "jacobi.h"
+#include "stdio.h"
 
 #define ind(i,j,n) ((n)*(j))+(i)
 
@@ -9,8 +10,8 @@ double offdiag(const double* mat, const size_t matSize, size_t* p, size_t* q)
         for (size_t j = i + 1; j < matSize; j++) {
             assert(i != j);
             double mat_ij = fabs(mat[ind(i,j,matSize)]);
-            // printf("mat_ij = %f\n", mat_ij);
             if (mat_ij > max) {
+                // printf("mat_ij = %f\n", mat_ij);
                 max = mat_ij;
                 *p = i;
                 *q = j;
