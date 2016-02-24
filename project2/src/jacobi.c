@@ -6,6 +6,7 @@
 double offdiag(const double* mat, const size_t matSize, size_t* p, size_t* q)
 {
     double max = 0;
+    char foundValue = 0;
     for (size_t i = 0; i < matSize; i++) {
         for (size_t j = i + 1; j < matSize; j++) {
             assert(i != j);
@@ -15,10 +16,16 @@ double offdiag(const double* mat, const size_t matSize, size_t* p, size_t* q)
                 max = mat_ij;
                 *p = i;
                 *q = j;
+                foundValue = 1;
             }
         }
     }
-    return max;
+    if (foundValue) {
+        return max;
+    }
+    else {
+        return -1;
+    }
 }
 
 void jacobiRot(double* mat, double* eigvec, const size_t matSize, const size_t p, const size_t q)
