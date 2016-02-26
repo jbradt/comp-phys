@@ -19,6 +19,7 @@ if(ARMADILLO_FOUND)
 
     add_executable(testJacobi test/test_jacobi.cpp)
     target_link_libraries(testJacobi jacobi ${ARMADILLO_LIBRARIES})
+    set_property(TARGET testJacobi PROPERTY CXX_STANDARD 11)
 endif()
 
 add_executable(test_jacobi_eig src/test_jacobi_eig.c src/jacobi.c)

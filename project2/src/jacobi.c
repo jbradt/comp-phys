@@ -79,6 +79,7 @@ unsigned jacobiSolve(double* mat, double* eigvec, const size_t matSize, const do
     for (unsigned i = 0; i < maxIter; i++) {
         size_t p = 0, q = 0;
         double maxOffdiagEl = offdiag(mat, matSize, &p, &q);
+        if (maxOffdiagEl < 0) return i;  // This means there are no nonzero offdiag elements
         // printf("p=%lu, q=%lu\n", p, q);
         assert(p != q);
         if(maxOffdiagEl < tol) {
