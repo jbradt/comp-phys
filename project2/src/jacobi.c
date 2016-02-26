@@ -7,13 +7,13 @@ double offdiag(const double* mat, const size_t matSize, size_t* p, size_t* q)
 {
     double max = 0;
     char foundValue = 0;
-    for (size_t i = 0; i < matSize; i++) {
-        for (size_t j = i + 1; j < matSize; j++) {
+    for (size_t j = 1; j < matSize; j++) {
+        for (size_t i = 0; i < j; i++) {
             assert(i != j);
-            double mat_ij = fabs(mat[ind(i,j,matSize)]);
-            if (mat_ij > max) {
+            double mat_ij = mat[ind(i,j,matSize)];
+            if (mat_ij > max || mat_ij < -max) {
                 // printf("mat_ij = %f\n", mat_ij);
-                max = mat_ij;
+                max = fabs(mat_ij);
                 *p = i;
                 *q = j;
                 foundValue = 1;

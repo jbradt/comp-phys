@@ -3,7 +3,7 @@ project("comp-phys-project2" VERSION 1.0.0)
 
 include_directories(include)
 
-add_definitions("-Weverything -Wno-missing-prototypes -Wno-exit-time-destructors")
+add_definitions("-Weverything -Wno-missing-prototypes -Wno-exit-time-destructors -Wno-c++98-compat")
 
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -gdwarf-2")
 
@@ -21,5 +21,9 @@ if(ARMADILLO_FOUND)
     target_link_libraries(testJacobi jacobi ${ARMADILLO_LIBRARIES})
     set_property(TARGET testJacobi PROPERTY CXX_STANDARD 11)
 endif()
+
+add_executable(timeOffdiag src/timeOffdiag.cpp)
+target_link_libraries(timeOffdiag jacobi)
+set_property(TARGET timeOffdiag PROPERTY CXX_STANDARD 11)
 
 add_executable(test_jacobi_eig src/test_jacobi_eig.c src/jacobi.c)
