@@ -22,15 +22,20 @@ void printMat(const double* mat, const size_t numRows, const size_t numCols)
     }
 }
 
-double potential(const double r)
+double oneElecPotential(const double r)
 {
     return r*r;
 }
 
+double twoElecPotential(const double r, const double omega)
+{
+    return omega*omega * r*r - 1/r;
+}
+
 int main(const int argc, const char** argv)
 {
-    if (argc < 5) {
-        puts("Usage: jacobiSolve MAX_RHO NUM_PTS TOL MAX_ITER");
+    if (argc < 6) {
+        puts("Usage: jacobiSolve MAX_RHO NUM_PTS TOL MAX_ITER NUM_ELEC OMEGA");
         return 1;
     }
 
@@ -38,6 +43,15 @@ int main(const int argc, const char** argv)
     size_t matSize = (size_t) atoi(argv[2]);
     double tol = atof(argv[3]);
     unsigned maxIter = (unsigned) atoi(argv[4]);
+    unsigned numElec = (unsigned) atoi(argv[5]);
+    if (!(numElec == 1 || numElec == 2)) {
+        printf("NUM_ELEC must be 1 or 2.\n");
+        return 1;
+    }
+    double omega = 0;
+    if (argc == 7) {
+        omega = atof(argv[6]);
+    }
 
     double stepSize = maxRho / matSize;
 
@@ -55,7 +69,13 @@ int main(const int argc, const char** argv)
     for (size_t i = 0; i < matSize; i++) {
         // Main diagonal elements
         double rho = (i+1) * stepSize;
-        double pot = potential(rho);
+        double pot;
+        if (numElec == 1) {
+            pot = oneElecPotential(rho);
+        }
+        else {
+            pot = twoElecPotential(rho, omega);
+        }
         mat[ind(i,i,matSize)] = (2 / (stepSize * stepSize)) + pot;
 
         // Upper and lower diagonals
@@ -78,9 +98,9 @@ int main(const int argc, const char** argv)
 
     outfile = fopen("eigval.csv", "w");
     if (outfile != NULL) {
-        fprintf(outfile, "rho,result\n");
+        fprintf(outfile, "eigval\n");
         for (size_t i = 0; i < matSize; i++) {
-            fprintf(outfile, "%0.8e,%0.8e\n", i*stepSize, mat[ind(i,i,matSize)]);
+            fprintf(outfile, "%0.8e\n", mat[ind(i,i,matSize)]);
         }
         fclose(outfile);
     }
