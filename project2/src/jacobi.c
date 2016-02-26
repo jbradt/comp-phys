@@ -1,5 +1,4 @@
 #include "jacobi.h"
-#include "stdio.h"
 
 #define ind(i,j,n) ((n)*(j))+(i)
 
