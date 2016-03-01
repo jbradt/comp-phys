@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[aps,prc,reprint,nobalancelastpage]{revtex4-1}
 
 \usepackage{siunitx}
 \usepackage{amsmath}
@@ -10,38 +10,236 @@
 \usepackage{url}
 \frenchspacing
 
+\newcommand{\sddots}[0]{\ensuremath{\smash{\ddots}}}
+
 % \usemintedstyle{xcode}
 
-\title{Project 2:\\Solving Schr\"odinger's equation for two electrons in a 3D harmonic oscillator well}
-\author{Josh Bradt}
-\date{March 4, 2016}
 
 \begin{document}
+
+\title{Project 2: Solving Schr\"odinger's equation for two electrons in a 3D harmonic oscillator well}
+\author{Joshua Bradt}
+\noaffiliation
+\date{March 4, 2016}
+
+\begin{abstract}
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+\end{abstract}
 
 \maketitle
 
 \section{Introduction}
+\label{sec:introduction}
     A commonly studied system in physics is that of the electron confined in a potential well of some sort. This arises in, for example, the study of quantum dots, quantum computing, and other areas of solid-state physics.
 
-    Assuming spherical symmetry, we can write the radial part of Schr\"odinger's equation as follows for the confined electron in three dimensions:
-    \begin{equation}
-        -\frac{\hbar^2}{2m} \left( \frac{1}{r^2} \frac{d}{dr} r^2 \frac{d}{dr} - \frac{l(l+1)}{r^2} \right) R(r) + V(r)R(r) = ER(r).  \label{eq:genschro}
-    \end{equation}
-    Here, $R(r)$ is the radial wave function of the electron, $l$ is the angular momentum, $V(r)$ is the confining potential, and $E$ is the energy. If we take the potential to be the three-dimensional harmonic oscillator potential,
-    \begin{equation}
-        V(r) = \frac{1}{2} m \omega^2 r^2,
-    \end{equation}
-    then the energies are known to be
-    \begin{equation}
-        E_{nl} = \hbar\omega \left( 2n + l + \frac{3}{2} \right)
-    \end{equation}
-    with quantum numbers $n=0,1,2,\dots$ and $l=0,1,2,\dots$.
+    \subsection{One electron case}
+    \label{sub:oneelec}
+        Assuming spherical symmetry, we can write the radial part of Schr\"odinger's equation as follows for the confined electron in three dimensions:
+        \begin{equation}
+            -\frac{\hbar^2}{2m} \left( \frac{1}{r^2} \frac{d}{dr} r^2 \frac{d}{dr} - \frac{l(l+1)}{r^2} \right) R(r) + V(r)R(r) = ER(r).  \label{eq:genschro}
+        \end{equation}
+        Here, $R(r)$ is the radial wave function of the electron, $l$ is the angular momentum, $V(r)$ is the confining potential, and $E$ is the energy. If we take the potential to be the three-dimensional harmonic oscillator potential,
+        \begin{equation}
+            V(r) = \frac{1}{2} m \omega^2 r^2,
+        \end{equation}
+        then the energies are known to be
+        \begin{equation}
+            E_{nl} = \hbar\omega \left( 2n + l + \frac{3}{2} \right)
+        \end{equation}
+        with quantum numbers $n=0,1,2,\dots$ and $l=0,1,2,\dots$.
 
-    Next, make the substitution $R(r) = (1/r) u(r)$ in (\ref{eq:genschro}) to find
-    \begin{equation*}
-        -\frac{\hbar^2}{2m} \left( \frac{d^2}{dr^2} - \frac{l(l+1)}{r^2} \right) u(r) + V(r)u(r) = Eu(r).
-    \end{equation*}
-    This 
+        Next, make the substitution $R(r) = (1/r) u(r)$ in (\ref{eq:genschro}) to find
+        \begin{equation*}
+            -\frac{\hbar^2}{2m} \left( \frac{d^2}{dr^2} - \frac{l(l+1)}{r^2} \right) u(r) + V(r)u(r) = Eu(r).
+        \end{equation*}
+        If we set $l = 0$ and thereby neglect the centrifugal barrier term -- which is, after all, ultimately just an extra term in the potential -- we can write this as
+        \begin{equation*}
+            -\frac{\hbar^2}{2m} \frac{d^2}{dr^2} u(r) + \frac{1}{2} m \omega^2 r^2 u(r) = Eu(r)
+        \end{equation*}
+        where $V(r)$ has been replaced with the expression for the harmonic oscillator potential introduced above. This can then be simplified by introducing the dimensionless variable $\rho = r / \alpha$ where $\alpha$ is some constant with the dimensions of length:
+        \begin{equation*}
+            -\frac{\hbar^2}{2m\alpha^2} \frac{d^2}{d\rho^2} u(\rho) + \frac{1}{2} m \omega^2 \alpha^2 \rho^2 u(\rho) = Eu(\rho).
+        \end{equation*}
+        This can be rearranged to find
+        \begin{equation*}
+            -\frac{d^2 u}{d\rho^2} + \frac{m^2\omega^2\alpha^4}{\hbar^2} \rho^2 u(\rho) = \frac{2m\alpha^2}{\hbar^2} E u(\rho)
+        \end{equation*}
+        which suggests that we define $\alpha = \sqrt{\hbar / m\omega}$ to get
+        \begin{equation}
+            -\frac{d^2 u}{d\rho^2} + \rho^2 u(\rho) = \frac{2}{\hbar\omega} E u(\rho) = \lambda u(\rho),\quad \lambda \equiv \frac{2E}{\hbar\omega}.  \label{eq:oneelecfinal}
+        \end{equation}
+
+    \subsection{Two-electron case}
+    \label{sub:twoelec}
+        The theory of the two-electron case is very similar to that laid out above in Section~\ref{sub:oneelec}. Begin with Schr\"odinger's equation for the two electrons in a potential $V$:
+        \begin{equation}
+            \left( -\frac{\hbar^2}{2m} \frac{\partial^2}{\partial r_1^2} - \frac{\hbar^2}{2m} \frac{\partial^2}{\partial r_2^2} + V(r_1, r_2) \right) u(r_1, r_2) = Eu(r_1, r_2).  \label{eq:twoelecbase}
+        \end{equation}
+        Here, $V$ must include the interaction of each electron with the well and with the other electron:
+        \begin{equation*}
+            V(r_1, r_2) = \frac{1}{2}m\omega^2 r_1^2 + \frac{1}{2}m\omega^2 r_2^2 + \frac{ke^2}{|\mathbf{r}_1 - \mathbf{r}_2|}.
+        \end{equation*}
+        Equation \ref{eq:twoelecbase} can be simplified by introducing the relative coordinate $r = |\mathbf{r}_1 - \mathbf{r}_2|$ and center-of-mass coordinate $R = (1/2)(\mathbf{r}_1 + \mathbf{r}_2)$. This substitution gives
+        \begin{multline*}
+            \left( -\frac{\hbar^2}{m}\frac{\partial^2}{\partial r^2} - \frac{\hbar^2}{4m}\frac{\partial^2}{\partial R^2} + \frac{1}{4}m\omega^2 r^2 +{} \right.\\\left. m\omega^2 R^2  + \frac{ke^2}{r} \right) u(r,R) = (E_r + E_R) u(r,R).
+        \end{multline*}
+        For simplicity, we'll neglect the center-of-mass motion and write
+        \begin{equation*}
+            \left( -\frac{\hbar^2}{m}\frac{d^2}{dr^2} + \frac{1}{4}m\omega^2 r^2 + \frac{ke^2}{r} \right) u(r) = E_r u(r).
+        \end{equation*}
+        Like in the one-electron case, we can define a unitless variable $\rho = r / \alpha$ and write
+        \begin{equation*}
+            \left( -\frac{\hbar^2}{m\alpha^2}\frac{d^2}{d\rho^2} + \frac{1}{4}m\omega^2\alpha^2 \rho^2 + \frac{ke^2}{\alpha\rho} \right) u(\rho) = E_r u(\rho),
+        \end{equation*}
+        which can be rearranged to get the equation
+        \begin{equation*}
+            \left( -\frac{d^2}{d\rho^2} + \frac{m^2\omega^4\alpha^4}{4\hbar^2} \rho^2 + \frac{ke^2m\alpha}{\hbar^2\rho} \right) u(\rho) = \frac{m\alpha^2E_r}{\hbar^2} u(\rho).
+        \end{equation*}
+        Define $\alpha = \hbar^2 / mke^2$, $\omega_r^2 = m^2\omega^4\alpha^4 / 4\hbar^2$, and $\lambda = m\alpha^2E_r / \hbar^2$ to find
+        \begin{equation}
+            -\frac{d^2 u}{d\rho^2} + \omega_r^2 \rho^2 u(\rho) + \frac{1}{\rho} u(\rho) = \lambda u(\rho). \label{eq:twoelecfinal}
+        \end{equation}
+
+        Equation (\ref{eq:twoelecfinal}) is nearly identical to (\ref{eq:oneelecfinal}); the only difference is the replacement of the potential $V(\rho) = \rho^2$ from the one-electron case with the new two-electron potential $V(\rho) = \omega_r^2 \rho^2 + 1/\rho$. This implies that we can develop a numerical solution to the general equation
+        \begin{equation}
+            -\frac{d^2 u}{d\rho^2} + V(\rho) u(\rho) = \lambda u(\rho). \label{eq:generaldiffeq}
+        \end{equation}
+        and then plug in the two different potentials to solve the one- and two-electron cases.
+
+
+\section{Numerical solution}
+\label{sec:numsoln}
+    To solve (\ref{eq:generaldiffeq}) numerically, begin by expressing the second derivative using the finite difference equation
+    \begin{equation}
+        u''(\rho) = \frac{u(\rho + h) + u(\rho - h) - 2u(\rho)}{h^2} + O(h^2)  \label{eq:findiff}
+    \end{equation}
+    with step size $h$. Discretizing (\ref{eq:generaldiffeq}) between $\rho = 0$ and some arbitrary $\rho_\text{max}$ then yields
+    \begin{equation}
+        -\frac{u_{i+1} + u_{i-1} - 2u_i}{h^2} + V_i u_i = \lambda u_i
+    \end{equation}
+    for $i=0,1,\dots,N$, $\rho_i = ih$, and $h = \rho_\text{max} / N$. Rearranging this equation gives
+    \begin{equation}
+        - \frac{1}{h^2} u_{i+1} - \frac{1}{h^2} u_{i-1} + \left(\frac{2}{h^2} + V_i\right)u_i = \lambda u_i,
+    \end{equation}
+    which suggests treating the problem as a system of linear equations
+    \begin{equation}
+        \mathbf{A}\mathbf{u} = \lambda \mathbf{u}.
+    \end{equation}
+    Here, the matrix $\mathbf{A}$ is defined as
+    \begin{equation}
+        \mathbf{A} =
+        \begin{pmatrix}
+            \frac{2}{h^2}+V_1 & -\frac{1}{h^2}    &                &        & \vphantom{\ddots} \\
+            -\frac{1}{h^2}    & \frac{2}{h^2}+V_2 & -\frac{1}{h^2} &        & \vphantom{\ddots} \\
+                              & -\frac{1}{h^2}    & \ddots         & \ddots &                   \\
+                              &                   & \ddots         & \ddots & -\frac{1}{h^2}    \\
+            \vphantom{\ddots} &                   &             & -\frac{1}{h^2} & \frac{2}{h^2}+V_{N-1} \\
+        \end{pmatrix},
+    \end{equation}
+    a tridiagonal matrix. The vector $\mathbf{u}$ is simply $\mathbf{u} = \begin{pmatrix}u_1 & u_2 & \dots & u_{N-1}\end{pmatrix}^T$.
+
+    \subsection{Jacobi's rotation algorithm}
+    \label{sub:jacobi}
+        One way to solve the system of linear equations we've found is by using Jacobi's rotation algorithm. This method iteratively applies similarity transformations to the matrix $\mathbf{A}$ until it becomes diagonal. That is, for orthogonal matrices $\mathbf{S}_i$, the matrix is transformed as
+        \begin{equation*}
+            \mathbf{S}_m^T \mathbf{S}_{m-1}^T \dots \mathbf{S}_{1}^T \mathbf{A} \mathbf{S}_{1} \mathbf{S}_{2} \dots \mathbf{S}_{m} = \mathbf{D}
+        \end{equation*}
+        where the elements of the final matrix are $D_{ij} = \delta_{ij}$. Naturally, identical transformations must be applied to the eigenvector and eigenvalue to maintain equality, but since the constant eigenvalue can be factored out of all of the matrix multiplications, these similarity transformations do not change the eigenvalues of the matrix.
+
+        Jacobi's rotation algorithm, in particular, chooses these orthogonal matrices to be
+        \begin{equation}
+            \mathbf{S} = \begin{pmatrix}
+                1      & 0      & \dots  & 0           & \dots &  0         & \dots & 0\\
+                0      & 1      & \dots  & 0           & \dots &  0         & \dots & 0\\
+                \vdots & \vdots & \ddots & \vdots      &       & \vdots     &       & \vdots \\
+                0      & 0      & \dots  & \cos\theta  & \dots & \sin\theta & \dots & 0\\
+                \vdots & \vdots &        & \vdots      &       & \vdots     &       & \vdots \\
+                0      & 0      & \dots  & -\sin\theta & \dots & \cos\theta & \dots & 0 \\
+                \vdots & \vdots &        & \vdots      &       & \vdots     &       & \vdots \\
+                0      & 0      & \dots  & 0           & \dots & 0          & \dots & 1 \\
+
+            \end{pmatrix},
+        \end{equation}
+        a generalized rotation matrix with elements
+        \begin{equation*}
+            S_{ij} = \begin{dcases}
+                1           & i=j,\quad i,j \notin \{p,q\}  \\
+                \cos\theta  & (ij=pp) \cup (ij=qq) \\
+                \sin\theta  & ij=pq \\
+                -\sin\theta & ij=qp \\
+                0           & \text{elsewhere}.
+            \end{dcases}
+        \end{equation*}
+        Note that the $\cos\theta$ elements are not necessarily along the diagonal of the matrix. The values of $\cos\theta$ and $\sin\theta$ can be found by looking at the only elements affected by the transformation:
+        \begin{equation*}
+            \begin{pmatrix}
+                b_{pp} & b_{pq} \\
+                b_{qp} & b_{qq} \\
+            \end{pmatrix}
+            =
+            \begin{pmatrix}
+                c & -s \\
+                s & c \\
+            \end{pmatrix}
+            \begin{pmatrix}
+                a_{pp} & a_{pq} \\
+                a_{qp} & a_{qq} \\
+            \end{pmatrix}
+            \begin{pmatrix}
+                c & s \\
+                -s & c \\
+            \end{pmatrix}.
+        \end{equation*}
+        Here, we've defined $c\equiv\cos\theta$ and $s\equiv\sin\theta$. To make the matrix $\mathbf{A}$ diagonal, we want to make $b_{pq} = b_{qp} = 0$. Therefore, we carry out the matrix multiplication and find
+        \begin{equation}
+            b_{qp} = a_{pq}(c^2-s^2) + (a_{pp} - a_{qq}) cs = 0.  \label{eq:bqp}
+        \end{equation}
+        If we define
+        \begin{gather}
+            \tau = \frac{a_{qq} - a_{pp}}{2a_{pq}}  \label{eq:tau} \\
+            t = \tan\theta = \frac{s}{c}
+        \end{gather}
+        then (\ref{eq:bqp}) can be rearranged and written as
+        \begin{equation*}
+            t^2 + 2\tau t - 1 = 0
+        \end{equation*}
+        which has roots
+        \begin{equation}
+            t = -\tau \pm \sqrt{\tau^2 + 1} = \frac{1}{\tau \pm \sqrt{\tau^2 + 1}}.
+        \end{equation}
+        To help prevent $t$ from diverging due to loss of numerical precision when $|\tau| \ll 1$, we choose the smaller of the two roots. Thus,
+        \begin{equation}
+            t = \begin{dcases}
+                \frac{1}{\tau + \sqrt{\tau^2 + 1}} & \tau \geq 0 \\
+                \frac{1}{\tau - \sqrt{\tau^2 + 1}} = \frac{-1}{-\tau + \sqrt{\tau^2 + 1}} & \tau < 0. \\
+            \end{dcases}
+            \label{eq:t}
+        \end{equation}
+        Knowing $t$ then gives values for $s$ and $c$ via trigonometric identities
+        \begin{equation}
+            c = \frac{1}{\sqrt{1 + t^2}} \quad \text{and}\quad s = tc, \label{eq:cs}
+        \end{equation}
+        and thereby defines the elements of the rotation matrix $\mathbf{S}$. Thus, the elements of the transformed matrix $\mathbf{B} = \mathbf{S}^T \mathbf{A} \mathbf{S}$ are
+        \begin{align}
+            b_{ip} &= ca_{ip} - sa_{iq}, \quad i \notin \{p, q\} \label{eq:bFirst}\\
+            b_{iq} &= ca_{iq} + sa_{ip}, \quad i \notin \{p, q\} \\
+            b_{pp} &= c^2 a_{pp} - 2csa_{pq} + s^2 a_{qq} \\
+            b_{qq} &= c^2 a_{qq} + 2csa_{pq} + s^2 a_{pp} \\
+            b_{pq} &= a_{pq}(c^2-s^2) + (a_{pp} - a_{qq}) cs = 0 \label{eq:bLast}
+        \end{align}
+        with equivalent transformations for the elements opposite the diagonal to maintain orthogonality. These equations are the basis of the Jacobi rotation algorithm.
+
+        The algorithm itself consists of a few basic steps:
+        \begin{enumerate}
+            \item Find the largest off-diagonal element in $\mathbf{A}$. The indices of this element are $p$ and $q$.
+            \item Calculate $\tau$ using (\ref{eq:tau}), $\tan\theta$ using (\ref{eq:t}), and $\cos\theta$ and $\sin\theta$ using (\ref{eq:cs}).
+            \item Calculate the new matrix elements $b_{ij}$ using (\ref{eq:bFirst}--\ref{eq:bLast}).
+            \item Check to see if the norm of the off-diagonal elements is less than some tolerance $\epsilon$. If not, repeat the process until it is.
+        \end{enumerate}
+
+
+
+
 
 
 
