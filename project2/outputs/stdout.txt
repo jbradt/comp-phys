@@ -1,0 +1,11 @@
+Making outputs to show convergence of lowest 3 eigenvalues
+Finished in 228887 iterations.
+Making outputs with varying omega
+Running for omega=0.01
+Finished in 232449 iterations.
+Running for omega=0.5
+Finished in 230270 iterations.
+Running for omega=1
+Finished in 228409 iterations.
+Running for omega=5
+Finished in 217562 iterations.
