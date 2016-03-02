@@ -29,7 +29,7 @@ double oneElecPotential(const double r)
 
 double twoElecPotential(const double r, const double omega)
 {
-    return omega*omega * r*r - 1/r;
+    return omega*omega * r*r + 1/r;
 }
 
 int main(const int argc, const char** argv)
