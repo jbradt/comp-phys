@@ -1,4 +1,4 @@
-\documentclass[aps,prc,reprint,nobalancelastpage]{revtex4-1}
+\documentclass[aps,prc,reprint]{revtex4-1}
 
 \usepackage{siunitx}
 \usepackage{amsmath}
@@ -6,7 +6,6 @@
 % \usepackage{algorithm}
 % \usepackage{algpseudocode}
 % \usepackage{minted}
-\usepackage{booktabs}
 \usepackage{url}
 \frenchspacing
 
@@ -17,27 +16,32 @@
 
 \begin{document}
 
-\title{Project 2: Solving Schr\"odinger's equation for two electrons in a 3D harmonic oscillator well}
+\title{Project 2: Solving Schr\"odinger's equation for two electrons in a 3D harmonic oscillator well using Jacobi's rotation algorithm}
 \author{Joshua Bradt}
 \noaffiliation
 \date{March 4, 2016}
 
 \begin{abstract}
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    Expressions for the Hamiltonian of one and two electrons trapped in a harmonic oscillator potential are derived. Jacobi's rotation algorithm for diagonalizing a system of equations is presented, and an implementation of this algorithm in C is used to find the first few eigenvalues and eigenfunctions of the system. The results are compared to results calculated by a function from the Armadillo linear algebra library \cite{Sanderson2010} and found to be the same. Finally, the performance of Jacobi's algorithm is measured and found to be much slower than the algorithm used by Armadillo.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
 \label{sec:introduction}
-    A commonly studied system in physics is that of the electron confined in a potential well of some sort. This arises in, for example, the study of quantum dots, quantum computing, and other areas of solid-state physics.
+    A commonly studied system in physics is that of the electron confined in a potential well of some sort. This arises in, for example, the study of quantum dots, quantum computing, and other areas of solid-state physics. \cite{courserepo} For the purposes of this work, we will consider the cases of one or two electrons confined by a harmonic oscillator potential, the theory of which is described in Section~\ref{sec:theory}. The one-electron case is a simple example of a particle interacting with an external potential, but the two-electron case is more complex due to the Coulomb repulsion between the two negatively charged particles. That being said, both of these cases admit analytic solutions. The solution to the one-electron problem is derived in most introductory quantum mechanics texts (e.g. \textcite[p. 351]{Shankar1994}), but an exact solution for the two-electron problem was only more recently found by \textcite{Taut1993}.
+
+    Instead of analytic solutions, it is often easier to seek a numerical solution. One simple algorithm to do this is Jacobi's rotation algorithm, which is derived in Section~\ref{sec:numsoln}. This method produces correct results, and is relatively easy to implement, but it is also quite inefficient, as shown in Section~\ref{sec:results}.
+
+\section{Theory}
+\label{sec:theory}
 
     \subsection{One electron case}
     \label{sub:oneelec}
         Assuming spherical symmetry, we can write the radial part of Schr\"odinger's equation as follows for the confined electron in three dimensions:
-        \begin{equation}
-            -\frac{\hbar^2}{2m} \left( \frac{1}{r^2} \frac{d}{dr} r^2 \frac{d}{dr} - \frac{l(l+1)}{r^2} \right) R(r) + V(r)R(r) = ER(r).  \label{eq:genschro}
-        \end{equation}
+        \begin{multline}
+            -\frac{\hbar^2}{2m} \left( \frac{1}{r^2} \frac{d}{dr} r^2 \frac{d}{dr} - \frac{l(l+1)}{r^2} \right) R(r) +{} \\ V(r)R(r) = ER(r).  \label{eq:genschro}
+        \end{multline}
         Here, $R(r)$ is the radial wave function of the electron, $l$ is the angular momentum, $V(r)$ is the confining potential, and $E$ is the energy. If we take the potential to be the three-dimensional harmonic oscillator potential,
         \begin{equation}
             V(r) = \frac{1}{2} m \omega^2 r^2,
@@ -258,6 +262,26 @@
     \label{sub:twoelecresults}
         The Jacobi algorithm code was run with the two-electron potential $\omega_r^2 \rho^2 + (1/\rho)$ for four values of $\omega_r$: 0.01, 0.5, 1.0, and 5.0. Once again, the maximum value of $\rho$ was set to 10, and the number of grid points was $375$. The probability distributions corresponding to the lowest three eigenvalues produced by the code are shown in Figure~\ref{fig:wavefunctions} with the corresponding one-electron distributions for comparison. The one- and two-electron distributions are very similar when $\omega_r = 1.0$ since the two potentials only differ by the addition of the $1/\rho$ term in that case. Otherwise, we can see that the electron distribution is pushed to higher values of $\rho$ as $\omega_r$ decreases. This is because a small value of $\omega_r$ allows the $1/\rho$ term to dominate the potential. On the other hand, a strong oscillator potential (large $\omega_r$) will dominate the Coulomb repulsion to drive the distribution toward smaller values of the separation $\rho$.
 
+        The accuracy of the algorithm for the two-electron case can be compared to an exact analytic solution to the problem found by \textcite{Taut1993}. The code was run for three different values of $\omega_r$ which had analytic results listed in Taut. The results of this comparison are shown in Table~\ref{tab:exact}. The Jacobi code reproduced the analytic eigenvalues almost exactly.
+
+        \begin{table}
+            \begin{tabular}{S[table-format=1.5]
+                            S[table-format=2]
+                            S[table-format=1.4]
+                            S[table-format=1.4]
+                            S[table-format=1.4]}
+                \hline\hline
+                {$\omega_r$} & {$\rho_\text{max}$} & {Exact} & {Calculated} & {Difference} \\
+                \hline
+                0.25    & 10 & 1.250  & 1.250  & 0.000  \\
+                0.05    & 15 & 0.3500 & 0.3510 & 0.0010 \\
+                0.01827 & 30 & 0.1644 & 0.1644 & 0.0000 \\
+                \hline\hline
+            \end{tabular}
+            \caption{Comparison of calculated eigenvalues of the two-electron system to an analytic solution for three values of the parameter $\omega_r$. The exact values are from \textcite{Taut1993}. (Note that the solutions printed in Taut are a factor of 2 less than the ones shown here. This is due to a difference in how he derives his expressions, and it has been accounted for already in this table.)}
+            \label{tab:exact}
+        \end{table}
+
     \subsection{Performance}
     \label{sub:perf}
         The Jacobi code was run for increasing numbers of grid points to measure the code's performance. The number of similarity transformations required to diagonalize the matrix grew as $O(1.647 N^2)$ to leading order. A quadratic fit to this data is shown in Figure~\ref{fig:transformScaling}.
@@ -276,14 +300,20 @@
             \label{fig:times}
         \end{figure}
 
+\section{Conclusion}
+\label{sec:conclusion}
+    While Jacobi's rotation algorithm is a straightforward and easily implemented method for finding the eigenvalues and eigenvectors of a matrix, it is also particularly slow and computationally inefficient. That was apparent in both the timing results, where this algorithm scaled as nearly a quartic function of the dimension of the matrix, and in the number of transformations performed, which scaled quadratically with the dimension of the matrix. Furthermore, the matrix being diagonalized here, which represented the Hamiltonian of one or two electrons confined to a harmonic potential well, was tridiagonal to begin with, which suggests that the algorithm could perform even worse for a general symmetric matrix.
 
+    The performance of the algorithm could be improved by parallelizing parts of it. According to a time profile created by Apple's \emph{Instruments} program, the vast majority of the time spent in the algorithm is taken up finding the largest off-diagonal element of the matrix. This would therefore be a good place to start with multithreading.
 
-\begin{figure*}[p]
+    That being said, the most obvious way to improve the performance of this process is to simply use a different, more efficient algorithm. The divide-and-conquer algorithm used by Armadillo's \texttt{eig\_sym} function would be a good candidate as its run time grew as $O(N^{1.817})$, which is significantly better than the Jacobi algorithm.
+
+\bibliography{project2.bib}
+
+\begin{figure*}
     \includegraphics{wavefunctions.pdf}
     \caption{The three lowest-energy two-electron probability distributions for four values of $\omega_r$, plotted in solid colors. The energy (or the magnitude of the eigenvalue) increases across columns from left to right, while the value of $\omega_r$ increases across rows from top to bottom. The solid black line on each plot is the corresponding one-electron probability distribution. The one- and two-electron distributions are very similar for $\omega_r = 1.0$, but they diverge from each other as $\omega_r$ moves away from 1.0.}
     \label{fig:wavefunctions}
 \end{figure*}
-
-\bibliography{project2.bib}
 
 \end{document}
