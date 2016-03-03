@@ -25,5 +25,3 @@ endif()
 add_executable(timeOffdiag src/timeOffdiag.cpp)
 target_link_libraries(timeOffdiag jacobi)
 set_property(TARGET timeOffdiag PROPERTY CXX_STANDARD 11)
-
-add_executable(test_jacobi_eig src/test_jacobi_eig.c src/jacobi.c)
