@@ -2,9 +2,13 @@
 *.dSYM
 build
 
+__pycache__
+
 # Latex
 *.aux
 *.fls
 *.log
 *.fdb_latexmk
 *.synctex.gz
+*.bbl
+*.blg

@@ -236,11 +236,54 @@
             \item Calculate the new matrix elements $b_{ij}$ using (\ref{eq:bFirst}--\ref{eq:bLast}).
             \item Check to see if the norm of the off-diagonal elements is less than some tolerance $\epsilon$. If not, repeat the process until it is.
         \end{enumerate}
+        An implementation of this algorithm in C can be found online in the repository at \cite{github} in the file \texttt{project2/src/jacobi.c}.
+
+\section{Results}
+\label{sec:results}
+    The algorithm described above in Section \ref{sub:jacobi} was run with one- and two-electron potentials.
+
+    \subsection{One-electron case}
+    \label{sub:oneelecresults}
+        For the one-electron case, the code was run with a maximum $\rho$ of 10 and $N=375$ grid points. This caused it to converge to the first three expected eigenvalues of 3, 7, and 11 to four significant figures after \num{228887} similarity transformations. The probability distributions $|u(\rho)|^2$ corresponding to the first 20 eigenvalues are shown in Figure~\ref{fig:eigvecs}.
+
+        \begin{figure}
+            \includegraphics{eigenvecs.pdf}
+            \caption{The probability distributions of the first 20 eigenfunctions of the one-electron system. The distributions are plotted as a function of $\rho$ from left to right, and distributions with increasing energy are plotted from bottom to top.}
+            \label{fig:eigvecs}
+        \end{figure}
+
+        To check whether this program is correct, the eigenvalues and eigenvectors were compared to those found by a divide-and-conquer eigenvalue algorithm provided by the Armadillo C++ linear algebra library \cite{Sanderson2010}. The first 20 eigenvalues differ by $10^{-7}$ at most, which is within the limits of floating-point precision. The probability distributions produced by the algorithm from Armadillo differ from those produced by the Jacobi algorithm by $10^{-10}$ at most, which implies a difference on the order of $10^{-5}$ in the magnitude of the eigenvectors. Assuming the results from the Armadillo library are correct, this confirms that the Jacobi algorithm is implemented correctly in this code.
+
+    \subsection{Two-electron case}
+    \label{sub:twoelecresults}
+        The Jacobi algorithm code was run with the two-electron potential $\omega_r^2 \rho^2 + (1/\rho)$ for four values of $\omega_r$: 0.01, 0.5, 1.0, and 5.0. Once again, the maximum value of $\rho$ was set to 10, and the number of grid points was $375$. The probability distributions corresponding to the lowest three eigenvalues produced by the code are shown in Figure~\ref{fig:wavefunctions} with the corresponding one-electron distributions for comparison. The one- and two-electron distributions are very similar when $\omega_r = 1.0$ since the two potentials only differ by the addition of the $1/\rho$ term in that case. Otherwise, we can see that the electron distribution is pushed to higher values of $\rho$ as $\omega_r$ decreases. This is because a small value of $\omega_r$ allows the $1/\rho$ term to dominate the potential. On the other hand, a strong oscillator potential (large $\omega_r$) will dominate the Coulomb repulsion to drive the distribution toward smaller values of the separation $\rho$.
+
+    \subsection{Performance}
+    \label{sub:perf}
+        The Jacobi code was run for increasing numbers of grid points to measure the code's performance. The number of similarity transformations required to diagonalize the matrix grew as $O(1.647 N^2)$ to leading order. A quadratic fit to this data is shown in Figure~\ref{fig:transformScaling}.
+
+        \begin{figure}
+            \includegraphics{transformScaling.pdf}
+            \caption{Scaling of the number of similarity transformations required as a function of the dimension of the matrix. The fit shown is the quadratic function $y = \num{1.647}x^2 - \num{9.496} x + \num{7.899}.$}
+            \label{fig:transformScaling}
+        \end{figure}
+
+        We also compared the time taken by the Jacobi code to that taken by the function from Armadillo. The time taken by each program was measured using the Unix \texttt{time} utility on a 2012 Mac Mini desktop computer with a \SI{2.3}{GHz} Intel Core i7 processor. The results are shown in Figure~\ref{fig:times} with power-law fits. The Jacobi algorithm was found to scale as $O(N^{3.814})$, while the algorithm from Armadillo scaled as $O(N^{1.817})$. The quality of this measurement is, however, limited by the fact that the \texttt{time} utility measures the execution time of the entire program, including the overhead for allocating and filling the matrices. The utility also only measures to a granularity of \SI{1}{ms}, so it cannot effectively measure the execution time of either algorithm for small $N$.
+
+        \begin{figure}
+            \includegraphics{timing.pdf}
+            \caption{Time taken by each solver as a function of the dimension of the matrix, shown on a log-log scale. Each set of data was fit with a power law function $y=ax^b$. The fit shown for the Jacobi solver data is the function $t=(\num{3.60e-9}) N^{3.814}$, while the fit to the Armadillo data is $t=(\num{3.96e-6}) N^{1.817}$. Data for $N<100$ was not used since the times measured for these small values of $N$ were dominated by overhead and limited by the low precision of the Unix \texttt{time} utility.}
+            \label{fig:times}
+        \end{figure}
 
 
 
+\begin{figure*}[p]
+    \includegraphics{wavefunctions.pdf}
+    \caption{The three lowest-energy two-electron probability distributions for four values of $\omega_r$, plotted in solid colors. The energy (or the magnitude of the eigenvalue) increases across columns from left to right, while the value of $\omega_r$ increases across rows from top to bottom. The solid black line on each plot is the corresponding one-electron probability distribution. The one- and two-electron distributions are very similar for $\omega_r = 1.0$, but they diverge from each other as $\omega_r$ moves away from 1.0.}
+    \label{fig:wavefunctions}
+\end{figure*}
 
-
-
+\bibliography{project2.bib}
 
 \end{document}

@@ -13,7 +13,7 @@ int main()
     auto end = std::chrono::high_resolution_clock::now();
 
     std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count() << std::endl;
-    delete m;
+    delete [] m;
 
     return 0;
 }
