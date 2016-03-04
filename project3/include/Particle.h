@@ -2,24 +2,25 @@
 #define PARTICLE_H
 
 #include <armadillo>
+#include <set>
+#include "Gravity.h"
 
 class Particle
 {
 public:
-    Particle(const double mass0, const arma::vec3& pos0, const arma::vec3& vel0)
-    : mass(mass0), pos(pos0), vel(vel0) {}
+    Particle(const double mass0, const arma::vec& pos0, const arma::vec& vel0);
+    ~Particle();
 
-    double getMass() const { return mass; }
-    arma::vec3 getPos() const { return pos; }
-    arma::vec3 getVel() const { return vel; }
+    arma::vec findNetGravForce() const;
+    void updatePositionRK4(const double timestep);
+    void updatePositionEuler(const double timestep);
 
-    void setPos(const arma::vec3& newPos) { pos = newPos; }
-    void setVel(const arma::vec3& newVel) { vel = newVel; }
+    double mass;
+    arma::vec pos;
+    arma::vec vel;
 
 private:
-    double mass;
-    arma::vec3 pos;
-    arma::vec3 vel;
+    static std::set<Particle*> instances;
 };
 
 #endif /* end of include guard: PARTICLE_H */

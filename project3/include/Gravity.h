@@ -2,9 +2,9 @@
 #define GRAVITY_H
 
 #include <armadillo>
-#include "Particle.h"
 #include <cmath>
+#include "Constants.h"
 
-arma::vec3 gravForce(const Particle& pa, const Particle& pb);
+arma::vec gravForce(const arma::vec& pos1, const double mass1, const arma::vec& pos2, const double mass2);
 
 #endif /* end of include guard: GRAVITY_H */

@@ -1,9 +1,8 @@
 #include "Gravity.h"
 
-arma::vec3 gravForce(const Particle& pa, const Particle& pb)
+arma::vec gravForce(const arma::vec& pos1, const double mass1, const arma::vec& pos2, const double mass2)
 {
-    const double G = 6.67e-11;
-    arma::vec3 sepVec = pb.getPos() - pa.getPos();
+    arma::vec sepVec = pos2 - pos1;
     double sepNorm = arma::norm(sepVec);
-    return G * pb.getMass() * pa.getMass() / pow(sepNorm, 3) * sepVec;
+    return Constants::G_AU * mass1 * mass2 / pow(sepNorm, 3) * sepVec;
 }
