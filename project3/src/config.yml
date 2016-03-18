@@ -1,0 +1,12 @@
+---
+
+planets:
+    - name: Sun
+      mass: 1.0
+      position: [0, 0]
+      velocity: [0, 0]
+
+    - name: Earth
+      mass: 3.0e-6
+      position: [1.0, 0.0]
+      velocity: [0, 0.0172]

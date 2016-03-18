@@ -1,28 +1,53 @@
 #include <iostream>
 #include <armadillo>
 #include "Particle.h"
+#include "parser.h"
+#include "yaml-cpp/yaml.h"
+#include <string>
+#include <vector>
+#include <memory>
 
-int main()
+
+int main(const int argc, const char** argv)
 {
-    Particle sun (1.0, arma::zeros<arma::vec>(2), arma::zeros<arma::vec>(2));
-    Particle earth (3.0e-6, arma::vec {1.0, 0}, arma::vec {0, 0.0172});
-    Particle jupiter (9.54e-4, arma::vec {5.427, 0}, arma::vec {0, 0.00754});
+    if (argc < 2) {
+        std::cout << "Usage: solar CONFIG_PATH" << std::endl;
+        return 1;
+    }
+
+    std::string configPath = argv[1];
+    YAML::Node config = YAML::LoadFile(configPath);
+
+    std::vector<std::unique_ptr<Particle>> planets;
+    for (const auto& planetNode : config["planets"]) {
+        std::cout << "Creating planet " << planetNode["name"] << std::endl;
+        double mass = planetNode["mass"].as<double>();
+        arma::vec pos = planetNode["position"].as<arma::vec>();
+        arma::vec vel = planetNode["velocity"].as<arma::vec>();
+
+        std::unique_ptr<Particle> ptr (new Particle {mass, pos, vel});
+        planets.push_back(std::move(ptr));
+    }
 
     double timestep = 1;
     arma::uword numIters = 365 * 20;
 
-    arma::mat earthTrack (numIters, earth.pos.n_elem);
-    arma::mat jupiterTrack (numIters, jupiter.pos.n_elem);
+    arma::uword numDims = planets.front()->pos.n_elem;
 
-    for (arma::uword i = 0; i < numIters; i++) {
-        earth.updatePositionEuler(timestep);
-        jupiter.updatePositionEuler(timestep);
-        earthTrack.row(i) = arma::conv_to<arma::rowvec>::from(earth.pos);
-        jupiterTrack.row(i) = arma::conv_to<arma::rowvec>::from(jupiter.pos);
+    std::vector<arma::mat> tracks;
+    for (size_t p = 0; p < planets.size(); p++) {
+        tracks.push_back(arma::mat(numIters, numDims));
     }
 
-    earthTrack.save("earthPos.csv", arma::csv_ascii);
-    jupiterTrack.save("jupPos.csv", arma::csv_ascii);
+    for (arma::uword i = 0; i < numIters; i++) {
+        for (size_t p = 0; p < planets.size(); p++) {
+            planets.at(p)->updatePositionEuler(timestep);
+            tracks.at(p).row(i) = planets.at(p)->pos.t();
+        }
+    }
+    // 
+    // earthTrack.save("earthPos.csv", arma::csv_ascii);
+    // jupiterTrack.save("jupPos.csv", arma::csv_ascii);
 
     return 0;
 }
