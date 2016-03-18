@@ -2,8 +2,8 @@
 
 std::set<Particle*> Particle::instances;
 
-Particle::Particle(const double mass0, const arma::vec& pos0, const arma::vec& vel0)
-: mass(mass0), pos(pos0), vel(vel0)
+Particle::Particle(const double mass0, const arma::vec& pos0, const arma::vec& vel0, const std::string& name0)
+: mass(mass0), pos(pos0), vel(vel0), name(name0)
 {
     instances.insert(this);
 }
@@ -13,7 +13,7 @@ Particle::~Particle()
     instances.erase(this);
 }
 
-arma::vec Particle::findNetGravForce() const
+arma::vec Particle::findNetGravForce(const arma::vec& pos) const
 {
     arma::vec totalForce (arma::size(pos), arma::fill::zeros);
 
@@ -25,26 +25,42 @@ arma::vec Particle::findNetGravForce() const
     return totalForce;
 }
 
-void Particle::updatePositionRK4(const double timestep)
+State Particle::findNextStateVerlet(const double timestep) const
 {
-    // *** This function is not correct at the moment!
-    arma::vec origPos = pos;
+    arma::vec force_i = findNetGravForce(pos);
+    arma::vec posNew = pos + timestep * vel + 0.5*timestep*timestep*force_i / mass;
+    arma::vec force_ip1 = findNetGravForce(posNew);
+    arma::vec velNew = vel + 0.5*timestep*(force_ip1 + force_i) / mass;
 
-    arma::vec k1 = findNetGravForce();
-    pos += 0.5 * timestep * k1;
-    arma::vec k2 = findNetGravForce();
-    pos += 0.5 * timestep * k2;
-    arma::vec k3 = findNetGravForce();
-    pos += timestep * k3;
-    arma::vec k4 = findNetGravForce();
-    k1.print();
-
-    pos = origPos + (timestep / 6) * (k1 + 2*k2 + 2*k3 + k4);
+    return State {posNew, velNew};
 }
 
-void Particle::updatePositionEuler(const double timestep)
+
+// void Particle::updatePositionRK4(const double timestep) const
+// {
+//     arma::vec k1 = findNetGravForce();
+//     pos += 0.5 * timestep * k1;
+//     arma::vec k2 = findNetGravForce();
+//     pos += 0.5 * timestep * k2;
+//     arma::vec k3 = findNetGravForce();
+//     pos += timestep * k3;
+//     arma::vec k4 = findNetGravForce();
+//     k1.print();
+//
+//     pos = origPos + (timestep / 6) * (k1 + 2*k2 + 2*k3 + k4);
+// }
+
+State Particle::findNextStateEuler(const double timestep) const
 {
-    arma::vec force = findNetGravForce();
-    vel += force * timestep / mass;
-    pos += vel * timestep;
+    arma::vec force = findNetGravForce(pos);
+    State result;
+    result.vel = vel + force * timestep / mass;
+    result.pos = pos + result.vel * timestep;
+    return result;
+}
+
+void Particle::setState(const State& st)
+{
+    pos = st.pos;
+    vel = st.vel;
 }
