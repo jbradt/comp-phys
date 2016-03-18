@@ -5,12 +5,8 @@
 #include <set>
 #include <string>
 #include "Gravity.h"
+#include "State.h"
 
-struct State
-{
-    arma::vec pos;
-    arma::vec vel;
-};
 
 class Particle
 {
@@ -18,7 +14,12 @@ public:
     Particle(const double mass0, const arma::vec& pos0, const arma::vec& vel0, const std::string& name0);
     ~Particle();
 
+    Particle(const Particle&) = delete;
+    Particle(Particle&&) = default;
+
     arma::vec findNetGravForce(const arma::vec& pos) const;
+    arma::vec findAcceleration(const arma::vec& pos) const;
+
     State findNextStateVerlet(const double timestep) const;
     State findNextStateRK4(const double timestep) const;
     State findNextStateEuler(const double timestep) const;

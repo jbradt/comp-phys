@@ -1,11 +1,13 @@
 #include <iostream>
 #include <armadillo>
 #include "Particle.h"
+#include "Integration.h"
 #include "parser.h"
 #include "yaml-cpp/yaml.h"
 #include <string>
 #include <vector>
 #include <memory>
+#include <functional>
 
 
 int main(const int argc, const char** argv)
@@ -18,7 +20,7 @@ int main(const int argc, const char** argv)
     std::string configPath = argv[1];
     YAML::Node config = YAML::LoadFile(configPath);
 
-    std::vector<std::unique_ptr<Particle>> planets;
+    std::vector<Particle> planets;
     for (const auto& planetNode : config["planets"]) {
         std::cout << "Creating planet " << planetNode["name"] << std::endl;
         double mass = planetNode["mass"].as<double>();
@@ -26,14 +28,13 @@ int main(const int argc, const char** argv)
         arma::vec vel = planetNode["velocity"].as<arma::vec>();
         std::string name = planetNode["name"].as<std::string>();
 
-        std::unique_ptr<Particle> ptr (new Particle {mass, pos, vel, name});
-        planets.push_back(std::move(ptr));
+        planets.emplace_back(mass, pos, vel, name);
     }
 
     double timestep = 1;
     arma::uword numIters = 365 * 20;
 
-    arma::uword numDims = planets.front()->pos.n_elem;
+    arma::uword numDims = planets.front().pos.n_elem;
 
     std::vector<arma::mat> tracks;
     for (size_t p = 0; p < planets.size(); p++) {
@@ -44,17 +45,20 @@ int main(const int argc, const char** argv)
         std::vector<State> states (planets.size());
 
         for (size_t p = 0; p < planets.size(); p++) {
-            states.at(p) = planets.at(p)->findNextStateEuler(timestep);
+            const auto& pl = planets.at(p);
+            pl.findAcceleration(pl.pos).print();
+            auto accelFunc = std::bind(&Particle::findAcceleration, &pl, std::placeholders::_1);
+            states.at(p) = euler(accelFunc, pl.pos, pl.vel, timestep);
         }
 
         for (size_t p = 0; p < planets.size(); p++) {
-            planets.at(p)->setState(states.at(p));
-            tracks.at(p).row(i) = planets.at(p)->pos.t();
+            planets.at(p).setState(states.at(p));
+            tracks.at(p).row(i) = planets.at(p).pos.t();
         }
     }
 
     for (size_t p = 0; p < planets.size(); p++) {
-        tracks.at(p).save(planets.at(p)->name + ".csv", arma::csv_ascii);
+        tracks.at(p).save(planets.at(p).name + ".csv", arma::csv_ascii);
     }
 
     return 0;

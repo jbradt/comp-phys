@@ -25,6 +25,11 @@ arma::vec Particle::findNetGravForce(const arma::vec& pos) const
     return totalForce;
 }
 
+arma::vec Particle::findAcceleration(const arma::vec& pos) const
+{
+    return findNetGravForce(pos) / mass;
+}
+
 State Particle::findNextStateVerlet(const double timestep) const
 {
     arma::vec force_i = findNetGravForce(pos);
@@ -50,14 +55,7 @@ State Particle::findNextStateVerlet(const double timestep) const
 //     pos = origPos + (timestep / 6) * (k1 + 2*k2 + 2*k3 + k4);
 // }
 
-State Particle::findNextStateEuler(const double timestep) const
-{
-    arma::vec force = findNetGravForce(pos);
-    State result;
-    result.vel = vel + force * timestep / mass;
-    result.pos = pos + result.vel * timestep;
-    return result;
-}
+
 
 void Particle::setState(const State& st)
 {
