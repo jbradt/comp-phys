@@ -15,7 +15,7 @@ public:
     ~Particle();
 
     Particle(const Particle&) = delete;
-    Particle(Particle&&) = default;
+    Particle(Particle&& other);
 
     arma::vec findNetGravForce(const arma::vec& pos) const;
     arma::vec findAcceleration(const arma::vec& pos) const;

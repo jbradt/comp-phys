@@ -13,6 +13,17 @@ Particle::~Particle()
     instances.erase(this);
 }
 
+Particle::Particle(Particle&& other)
+{
+    mass = other.mass;
+    pos = std::move(other.pos);
+    vel = std::move(other.vel);
+    name = std::move(other.name);
+
+    instances.erase(&other);
+    instances.insert(this);
+}
+
 arma::vec Particle::findNetGravForce(const arma::vec& pos) const
 {
     arma::vec totalForce (arma::size(pos), arma::fill::zeros);
