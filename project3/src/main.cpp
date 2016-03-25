@@ -32,7 +32,31 @@ int main(const int argc, const char** argv)
     }
 
     double timestep = 1;
-    arma::uword numIters = 365 * 20;
+    if (config["timestep"]) {
+        timestep = config["timestep"].as<double>();
+    }
+
+    arma::uword numIters = 365 * 100;
+    if (config["num_iters"]) {
+        numIters = config["num_iters"].as<double>();
+    }
+
+    std::function<decltype(euler)> integrator = euler;
+    if (config["integrator"]) {
+        std::string intName = config["integrator"].as<std::string>();
+        if (intName == "euler") {
+            integrator = euler;
+        }
+        else if (intName == "verlet") {
+            integrator = verlet;
+        }
+        else {
+            std::cerr << "Unknown integrator name " << intName << std::endl;
+            return 1;
+        }
+
+        std::cout << "Using integrator " << intName << std::endl;
+    }
 
     arma::uword numDims = planets.front().pos.n_elem;
 
@@ -46,7 +70,6 @@ int main(const int argc, const char** argv)
 
         for (size_t p = 0; p < planets.size(); p++) {
             const auto& pl = planets.at(p);
-            pl.findAcceleration(pl.pos).print();
             auto accelFunc = std::bind(&Particle::findAcceleration, &pl, std::placeholders::_1);
             states.at(p) = euler(accelFunc, pl.pos, pl.vel, timestep);
         }

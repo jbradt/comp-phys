@@ -20,10 +20,6 @@ public:
     arma::vec findNetGravForce(const arma::vec& pos) const;
     arma::vec findAcceleration(const arma::vec& pos) const;
 
-    State findNextStateVerlet(const double timestep) const;
-    State findNextStateRK4(const double timestep) const;
-    State findNextStateEuler(const double timestep) const;
-
     void setState(const State& st);
 
     double mass;
