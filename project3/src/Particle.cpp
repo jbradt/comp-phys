@@ -24,21 +24,21 @@ Particle::Particle(Particle&& other)
     instances.insert(this);
 }
 
-arma::vec Particle::findNetGravForce(const arma::vec& pos) const
+arma::vec Particle::findNetGravForce(const arma::vec& posVec) const
 {
-    arma::vec totalForce (arma::size(pos), arma::fill::zeros);
+    arma::vec totalForce (arma::size(posVec), arma::fill::zeros);
 
     for (const Particle* p : instances) {
         if (p == this) continue;
-        totalForce += gravForce(pos, mass, p->pos, p->mass);
+        totalForce += gravForce(posVec, mass, p->pos, p->mass);
     }
 
     return totalForce;
 }
 
-arma::vec Particle::findAcceleration(const arma::vec& pos) const
+arma::vec Particle::findAcceleration(const arma::vec& posVec) const
 {
-    return findNetGravForce(pos) / mass;
+    return findNetGravForce(posVec) / mass;
 }
 
 void Particle::setState(const State& st)

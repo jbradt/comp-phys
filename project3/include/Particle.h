@@ -17,8 +17,8 @@ public:
     Particle(const Particle&) = delete;
     Particle(Particle&& other);
 
-    arma::vec findNetGravForce(const arma::vec& pos) const;
-    arma::vec findAcceleration(const arma::vec& pos) const;
+    arma::vec findNetGravForce(const arma::vec& posVec) const;
+    arma::vec findAcceleration(const arma::vec& posVec) const;
 
     void setState(const State& st);
 

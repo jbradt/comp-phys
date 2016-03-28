@@ -3,7 +3,7 @@ project("comp-phys-project3" VERSION 1.0.0)
 
 include_directories(include)
 
-set(WARNING_FLAGS -Weverything -Wno-missing-prototypes -Wno-exit-time-destructors -Wno-c++98-compat)
+set(WARNING_FLAGS -Weverything -Wno-missing-prototypes -Wno-padded -Wno-global-constructors -Wno-exit-time-destructors -Wno-c++98-compat)
 
 find_package(Armadillo REQUIRED)
 

@@ -38,7 +38,7 @@ int main(const int argc, const char** argv)
 
     arma::uword numIters = 365 * 100;
     if (config["num_iters"]) {
-        numIters = config["num_iters"].as<double>();
+        numIters = config["num_iters"].as<arma::uword>();
     }
 
     std::function<decltype(euler)> integrator = euler;
