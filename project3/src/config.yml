@@ -2,7 +2,7 @@
 
 timestep: 1  # days
 num_iters: 7300  # days
-integrator: verlet
+integrator: rk4
 
 planets:
     - name: Sun

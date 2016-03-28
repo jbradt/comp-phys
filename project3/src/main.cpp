@@ -50,6 +50,9 @@ int main(const int argc, const char** argv)
         else if (intName == "verlet") {
             integrator = verlet;
         }
+        else if (intName == "rk4") {
+            integrator = rk4;
+        }
         else {
             std::cerr << "Unknown integrator name " << intName << std::endl;
             return 1;
