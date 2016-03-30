@@ -28,7 +28,12 @@ int main(const int argc, const char** argv)
         arma::vec vel = planetNode["velocity"].as<arma::vec>();
         std::string name = planetNode["name"].as<std::string>();
 
-        planets.emplace_back(mass, pos, vel, name);
+        bool fixed = false;
+        if (planetNode["fixed"]) {
+            fixed = planetNode["fixed"].as<bool>();
+        }
+
+        planets.emplace_back(mass, pos, vel, name, fixed);
     }
 
     double timestep = 1;
@@ -65,6 +70,7 @@ int main(const int argc, const char** argv)
 
     std::vector<arma::mat> tracks;
     for (size_t p = 0; p < planets.size(); p++) {
+
         tracks.push_back(arma::mat(numIters, numDims));
     }
 
@@ -73,8 +79,13 @@ int main(const int argc, const char** argv)
 
         for (size_t p = 0; p < planets.size(); p++) {
             const auto& pl = planets.at(p);
-            auto accelFunc = std::bind(&Particle::findAcceleration, &pl, std::placeholders::_1);
-            states.at(p) = euler(accelFunc, pl.pos, pl.vel, timestep);
+            if (!pl.fixed) {
+                auto accelFunc = std::bind(&Particle::findAcceleration, &pl, std::placeholders::_1);
+                states.at(p) = integrator(accelFunc, pl.pos, pl.vel, timestep);
+            }
+            else {
+                states.at(p) = State {pl.pos, pl.vel};
+            }
         }
 
         for (size_t p = 0; p < planets.size(); p++) {
