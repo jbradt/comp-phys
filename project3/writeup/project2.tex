@@ -3,8 +3,8 @@
 \usepackage{siunitx}
 \usepackage{amsmath}
 \usepackage{mathtools}
-% \usepackage{algorithm}
-% \usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 % \usepackage{minted}
 \usepackage{url}
 \frenchspacing
@@ -69,7 +69,7 @@
 
         Another method for solving the equations can be found by beginning with Taylor expansions for the position and velocity:
         \begin{align}
-            \mathbf{r}(t+h) &= \mathbf{r}(t) + h \dot{\mathbf{r}}(t) + \frac{h^2}{2}\ddot{\mathbf{r}}(t) + O(h^3) \\
+            \mathbf{r}(t+h) &= \mathbf{r}(t) + h \dot{\mathbf{r}}(t) + \frac{h^2}{2}\ddot{\mathbf{r}}(t) + O(h^3) \label{eq:verletp}\\
             \mathbf{v}(t+h) &= \mathbf{v}(t) + h \dot{\mathbf{v}}(t) + \frac{h^2}{2}\ddot{\mathbf{v}}(t) + O(h^3). \label{eq:verletv}
         \end{align}
         To second order, the derivative of the second equation is
@@ -84,8 +84,26 @@
         \begin{equation}
             \mathbf{v}(t+h) = \mathbf{v}(t) + \frac{h}{2} [\dot{\mathbf{v}}(t+h) + \dot{\mathbf{v}}(t)] + O(h^3).
         \end{equation}
-        Finally, note that $\mathbf{v}(t) = \dot{\mathbf{r}}$, so
+        Finally, note that $\mathbf{v}(t) = \dot{\mathbf{r}}(t)$ and $\mathbf{F}(t) = \dot{\mathbf{v}}(t) = \ddot{\mathbf{r}}(t)$, so (\ref{eq:verletp}) and (\ref{eq:verletv}) can be rewritten (in discretized form) as
+        \begin{gather}
+            \mathbf{r}_{i+1} = \mathbf{r}_i + h\mathbf{v}_i + \frac{h^2}{2} \frac{\mathbf{F}(\mathbf{r}_i, t_i)}{m} + O(h^3) \\
+            \mathbf{v}_{i+1} = \mathbf{v}_i + \frac{h}{2} \left(\frac{\mathbf{F}(\mathbf{r}_{i+1}, t_{i+1})}{m} + \frac{\mathbf{F}(\mathbf{r}_i, t_i)}{m}\right) + O(h^3)
+        \end{gather}
+        These two equations can then be evaluated in the order written at each iteration to find the new position and velocity for each body.
 
+        \begin{figure}
+            \begin{algorithm}[H]
+                \begin{algorithmic}
+                    \Function{Verlet}{$\mathbf{r}$, $\mathbf{v}$, $h$}
+                        \State $\mathbf{a} \gets \text{findAcceleration}(\mathbf{r})$
+                        \State $\mathbf{r}' \gets \mathbf{r} + h \mathbf{v} + \frac{1}{2} h^2 \mathbf{a}$
+                        \State $\mathbf{a}' \gets \text{findAcceleration}(\mathbf{r}')$
+                        \State $\mathbf{v}' = \mathbf{v} + \frac{1}{2} h (\mathbf{a} + \mathbf{a}')$
+                        \State \textbf{return} $(\mathbf{r}', \mathbf{v}')$
+                    \EndFunction
+                \end{algorithmic}
+            \end{algorithm}
+        \end{figure}
 
 
 \end{document}
