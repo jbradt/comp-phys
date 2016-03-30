@@ -1,0 +1,20 @@
+---
+
+timestep: 1.0  # days
+num_iters: 1000  # days
+integrator: rk4
+
+planets:
+    # All masses are in solar masses, and taken from Wolfram Alpha
+    # All vectors are in A.U. or A.U./d
+
+    - name: Sun
+      mass: 1.0
+      position: [0, 0]
+      velocity: [0, 0]
+      fixed: True
+
+    - name: Earth
+      mass: 3.0e-6
+      position: [1.0, 0]
+      velocity: [0, 17.202e-3]
