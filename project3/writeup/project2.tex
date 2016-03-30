@@ -1,0 +1,91 @@
+\documentclass[aps,prc,reprint,nobalancelastpage]{revtex4-1}
+
+\usepackage{siunitx}
+\usepackage{amsmath}
+\usepackage{mathtools}
+% \usepackage{algorithm}
+% \usepackage{algpseudocode}
+% \usepackage{minted}
+\usepackage{url}
+\frenchspacing
+
+\newcommand{\sun}[0]{\ensuremath{\odot}}
+
+% \usemintedstyle{xcode}
+
+
+\begin{document}
+
+\title{Project 3: A model of the solar system}
+\author{Joshua Bradt}
+\noaffiliation
+\date{April 1, 2016}
+
+\maketitle
+
+\section{Introduction}
+\label{sec:introduction}
+
+    The solar system is a simple, physically meaningful system to use when comparing different techniques for solving differential equations. Using Newtonian gravity (and ignoring relativistic effects), the planets are held in orbit around the sun by the inverse square law force
+    \begin{equation}
+        \mathbf{F} = \frac{G m_1 m_2}{r^3} \mathbf{r}.
+    \end{equation}
+    Here, the vector $\mathbf{r}$ points from one body to the other.
+
+    For $N$ bodies, this generalizes to give the following force on body $k$:
+    \begin{equation}
+        \mathbf{F}_k = \sum_{i \neq k} \frac{G m_i m_k}{r_{ik}^3} \mathbf{r}_{ik}
+    \end{equation}
+    Naturally there are $N$ such equations for the $N$ bodies in the system. In Cartesian coordinates, these can be rewritten as $3N$ coupled equations:
+    \begin{align}
+        \frac{d^2 x_k}{dt^2} &= \sum_{i \neq k} \frac{G m_i}{r_{ik}^3} (x_i - x_k) \\
+        \frac{d^2 y_k}{dt^2} &= \sum_{i \neq k} \frac{G m_i}{r_{ik}^3} (y_i - y_k) \\
+        \frac{d^2 z_k}{dt^2} &= \sum_{i \neq k} \frac{G m_i}{r_{ik}^3} (z_i - z_k)
+    \end{align}
+    where
+    \begin{equation}
+        r_{ik} = \sqrt{(x_i - x_k)^2 + (y_i - y_k)^2 + (z_i - z_k)}.
+    \end{equation}
+    The motion of the planets can then be simulated given appropriate initial conditions and an algorithm for solving these equations.
+
+\section{Numerical algorithms}
+\label{sec:algorithms}
+
+    \subsection{Euler's method}
+    \label{sub:euler}
+
+        Perhaps the simplest method for solving a set of differential equations is Euler's method. This simple algorithm uses the first derivatives to step from one point to the next.
+
+        Given an initial position $\mathbf{r}_i$ and velocity $\mathbf{v}_i$ at time $t_i$, the position and the velocity at the next step are calculated as
+        \begin{align}
+            \mathbf{v}_{i+1} &= \mathbf{v}_i + \frac{\mathbf{F}(\mathbf{r}_i, t_i)}{m_i} \Delta t \\
+            \mathbf{r}_{i+1} &= \mathbf{r}_i + \mathbf{v}_i \Delta t
+        \end{align}
+
+        This algorithm is very simple to implement, but as a first-order method, its $O(\Delta t)$ error can severely limit the precision of the results. This can be helped by choosing a small time step, but this increases computation time.
+
+    \subsection{Velocity Verlet algorithm}
+    \label{sub:verlet}
+
+        Another method for solving the equations can be found by beginning with Taylor expansions for the position and velocity:
+        \begin{align}
+            \mathbf{r}(t+h) &= \mathbf{r}(t) + h \dot{\mathbf{r}}(t) + \frac{h^2}{2}\ddot{\mathbf{r}}(t) + O(h^3) \\
+            \mathbf{v}(t+h) &= \mathbf{v}(t) + h \dot{\mathbf{v}}(t) + \frac{h^2}{2}\ddot{\mathbf{v}}(t) + O(h^3). \label{eq:verletv}
+        \end{align}
+        To second order, the derivative of the second equation is
+        \begin{equation}
+            \dot{\mathbf{v}}(t+h) = \dot{\mathbf{v}}(t) + h \ddot{\mathbf{v}}(t) + O(h^2)
+        \end{equation}
+        which can be rearranged to find:
+        \begin{equation}
+            \frac{h^2}{2}\ddot{\mathbf{v}}(t) = \frac{h}{2} [\dot{\mathbf{v}}(t+h) - \dot{\mathbf{v}}(t)] + O(h^3).
+        \end{equation}
+        This can then be plugged into (\ref{eq:verletv}) to find
+        \begin{equation}
+            \mathbf{v}(t+h) = \mathbf{v}(t) + \frac{h}{2} [\dot{\mathbf{v}}(t+h) + \dot{\mathbf{v}}(t)] + O(h^3).
+        \end{equation}
+        Finally, note that $\mathbf{v}(t) = \dot{\mathbf{r}}$, so
+
+
+
+\end{document}
