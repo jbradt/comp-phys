@@ -66,7 +66,7 @@ int main(const int argc, const char** argv)
         std::cout << "Using integrator " << intName << std::endl;
     }
 
-    arma::uword numDims = planets.front().pos.n_elem;
+    arma::uword numDims = planets.front().pos.n_elem + planets.front().vel.n_elem;
 
     std::vector<arma::mat> tracks;
     for (size_t p = 0; p < planets.size(); p++) {
@@ -89,8 +89,9 @@ int main(const int argc, const char** argv)
         }
 
         for (size_t p = 0; p < planets.size(); p++) {
-            planets.at(p).setState(states.at(p));
-            tracks.at(p).row(i) = planets.at(p).pos.t();
+            const auto& newState = states.at(p);
+            planets.at(p).setState(newState);
+            tracks.at(p).row(i) = arma::join_vert(newState.pos, newState.vel).t();
         }
     }
 

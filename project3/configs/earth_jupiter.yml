@@ -1,12 +1,13 @@
 ---
 
 timestep: 1.0  # days
-num_iters: 1460
+num_iters: 4329  # days
 integrator: rk4
 
 planets:
     # All masses are in solar masses, and taken from Wolfram Alpha
-    # All vectors are in A.U. or A.U./d
+    # All vectors are in A.U. or A.U./d, from http://ssd.jpl.nasa.gov/horizons.cgi
+    # Position and velocity vectors are for 2016-Mar-25 00:00:00.0000 TDB
 
     - name: Sun
       mass: 1.0
@@ -18,3 +19,9 @@ planets:
       mass: 3.0e-6
       position: [1.0, 0]
       velocity: [0, 17.202e-3]
+
+    - name: Jupiter
+      mass: 9.5458e-4
+    #   mass: 9.5458e-3
+      position: [5.20, 0]
+      velocity: [0, 7.543e-3]

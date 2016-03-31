@@ -17,4 +17,4 @@ planets:
     - name: Earth
       mass: 3.0e-6
       position: [1.0, 0]
-      velocity: [0, 17.202e-3]
+      velocity: [0, 0.0243]
