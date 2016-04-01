@@ -1,18 +1,14 @@
-\documentclass[aps,prc,reprint,nobalancelastpage]{revtex4-1}
+\documentclass[aps,prc,reprint]{revtex4-1}
 
 \usepackage{siunitx}
 \usepackage{amsmath}
 \usepackage{mathtools}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-% \usepackage{minted}
 \usepackage{url}
 \frenchspacing
 
 \newcommand{\sun}[0]{\ensuremath{\odot}}
-
-% \usemintedstyle{xcode}
-
 
 \begin{document}
 
@@ -32,8 +28,9 @@
 
     The solar system is a simple, physically meaningful system to use when comparing different techniques for solving differential equations. Using Newtonian gravity (and ignoring relativistic effects), the planets are held in orbit around the sun by the inverse square law force
     \begin{equation*}
-        \mathbf{F} = \frac{G m_1 m_2}{r^3} \mathbf{r}.
+        \mathbf{F} = \frac{G m_1 m_2}{r^3} \mathbf{r}
     \end{equation*}
+    where the constant $G = \SI{6.67e-11}{m^3.kg^{-1}.s^{-2}} = \SI{2.959e-4}{au^3.m_\sun^{-1}.d^{-2}}$. \cite{Wolfram|Alpha}
     Here, the vector $\mathbf{r}$ points from one body to the other. For $N$ bodies, this generalizes to give the following force on body $k$:
     \begin{equation*}
         \mathbf{F}_k = \sum_{i \neq k} \frac{G m_i m_k}{r_{ik}^3} \mathbf{r}_{ik}
@@ -142,7 +139,7 @@
             k_4     &= f(x_i + h k_3, t_i + h) \\
             x_{i+1} &= x_i + \tfrac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4) + O(h^5).
         \end{align}
-        One clear advantage of this method is that the error scales as $h^5$, making this a much higher-order method than either of the previous two. \cite{Hjorth-Jensen2016}
+        One clear advantage of this method is that the error scales as $h^5$, making this a much more precise method than either of the previous two. \cite{Hjorth-Jensen2016}
 
         An implementation of this method is shown in Algorithm~\ref{alg:rk4}.
 
@@ -178,7 +175,7 @@
 
         First, the code was tested considering only the motion of the Earth around the Sun. In this case, the orbit of the Earth was assumed to be circular, and the Sun was fixed in place at the origin of the two-dimensional coordinate system.
 
-        The initial position of the Earth was set to the vector $\mathbf{r} = (\SI{1}{au}, \SI{0}{au})$ since \SI{1}{au} is defined as the approximate distance between the Earth and the Sun. The initial velocity of the Earth can then be found by equating the centripetal force to the gravitational force to find
+        The initial position of the Earth was set to the vector $\mathbf{r} = (1.0, 0)\,\si{au}$ since \SI{1}{au} is defined as the approximate distance between the Earth and the Sun. The initial velocity of the Earth can then be found by equating the centripetal force to the gravitational force to find
         \begin{equation*}
             v = \sqrt{\frac{G m_\sun}{r}} = \SI{1.7202e-2}{au/d}
         \end{equation*}
@@ -197,11 +194,11 @@
     \subsection{Escape velocity}
     \label{sub:escape}
 
-        Another simple test is to plot the behavior of a planet at its escape velocity. The escape velocity is the velocity at which the planet's kinetic and potential energy are equal, or
+        Another simple test is to plot the behavior of a planet at its escape velocity. The escape velocity is the velocity at which the planet's total energy is zero \cite{Goldstein2002}, or where its kinetic and potential energy are equal. This happens for the Earth when
         \begin{equation}
             v = \sqrt{\frac{2Gm_\sun}{r}} = \SI{2.4327e-2}{au/d}
         \end{equation}
-        in the tangential direction. \cite{Goldstein2002} The results of running the program with this velocity are shown in Figure~\ref{fig:escape}.
+        in the tangential direction. The results of running the program with this velocity are shown in Figure~\ref{fig:escape}.
 
         \begin{figure}
             \includegraphics{escape.pdf}
