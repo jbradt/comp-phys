@@ -12,7 +12,10 @@
 
 int main(const int argc, const char** argv)
 {
-    Cluster cl (20, 10, 1, 10);
+    auto integrator = std::function<decltype(euler)>(euler);
+    Cluster cl (20, 10, 1, 10, integrator);
+    std::cout << cl << std::endl;
+    cl.update(10);
     std::cout << cl << std::endl;
     return 0;
 }

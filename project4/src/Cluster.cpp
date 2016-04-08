@@ -1,6 +1,8 @@
 #include "Cluster.h"
 
-Cluster::Cluster(const size_t num, const double massMean, const double massDev, const double posRad)
+Cluster::Cluster(const size_t num, const double massMean, const double massDev, const double posRad,
+                 const intFunc_t integrator)
+: integrator(integrator)
 {
     particles.reserve(num);
     arma::vec masses = arma::randn<arma::vec>(num) * massDev + massMean;
@@ -15,6 +17,19 @@ Cluster::Cluster(const size_t num, const double massMean, const double massDev, 
         }
 
         particles.emplace_back(masses(i), pos, arma::zeros<arma::vec>(3));
+    }
+}
+
+void Cluster::update(const double timestep)
+{
+    std::vector<State> newStates;
+    for (const auto& p : particles) {
+        auto accelFunc = std::bind(&Particle::findAcceleration, &p, std::placeholders::_1);
+        newStates.push_back(integrator(accelFunc, p.pos, p.vel, timestep));
+    }
+
+    for (size_t i = 0; i < particles.size(); i++) {
+        particles.at(i).setState(newStates.at(i));
     }
 }
 
