@@ -9,7 +9,7 @@ find_package(Armadillo REQUIRED)
 
 # add_subdirectory(dependencies)
 
-add_executable(cluster src/Particle.cpp src/Integration.cpp src/Gravity.cpp src/parser.cpp src/main.cpp)
+add_executable(cluster src/Particle.cpp src/Integration.cpp src/Gravity.cpp src/parser.cpp src/main.cpp src/Cluster.cpp)
 target_link_libraries(cluster ${ARMADILLO_LIBRARIES} yaml-cpp)
 target_compile_options(cluster PUBLIC ${WARNING_FLAGS})
 set_target_properties(cluster PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED True)

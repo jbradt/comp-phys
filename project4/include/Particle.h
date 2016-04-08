@@ -11,8 +11,7 @@
 class Particle
 {
 public:
-    Particle(const double mass0, const arma::vec& pos0, const arma::vec& vel0, const std::string& name0,
-             const bool fixed0 = false);
+    Particle(const double mass0, const arma::vec& pos0, const arma::vec& vel0);
     ~Particle();
 
     Particle(const Particle&) = delete;
@@ -26,10 +25,7 @@ public:
     double mass;
     arma::vec pos;
     arma::vec vel;
-    std::string name;
-
-    bool fixed;
-
+    
 private:
     static std::set<Particle*> instances;
 };

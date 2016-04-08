@@ -2,9 +2,8 @@
 
 std::set<Particle*> Particle::instances;
 
-Particle::Particle(const double mass0, const arma::vec& pos0, const arma::vec& vel0, const std::string& name0,
-                   const bool fixed0)
-: mass(mass0), pos(pos0), vel(vel0), name(name0), fixed(fixed0)
+Particle::Particle(const double mass0, const arma::vec& pos0, const arma::vec& vel0)
+: mass(mass0), pos(pos0), vel(vel0)
 {
     instances.insert(this);
 }
@@ -19,8 +18,6 @@ Particle::Particle(Particle&& other)
     mass = other.mass;
     pos = std::move(other.pos);
     vel = std::move(other.vel);
-    name = std::move(other.name);
-    fixed = other.fixed;
 
     instances.erase(&other);
     instances.insert(this);
