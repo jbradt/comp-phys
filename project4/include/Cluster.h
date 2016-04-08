@@ -9,6 +9,9 @@ class Cluster
 public:
     Cluster(const size_t num, const double massMean, const double massDev, const double posRad);
 
+    void findForceMatrix(const double timestep)
+
+    void updateState(const double timestep);
     void print();
 private:
     arma::mat state;
