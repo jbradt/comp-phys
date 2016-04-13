@@ -10,7 +10,7 @@ Cluster::Cluster(const size_t num, const double massMean, const double massDev, 
     for (size_t i = 0; i < num; i++) {
         arma::vec pos;
         while (true) {
-            pos = arma::randu<arma::vec>(3) * posRad;
+            pos = arma::randu<arma::vec>(3) * (2 * posRad) - posRad;
             if (arma::norm(pos, 2) <= posRad) {
                 break;
             }
@@ -31,6 +31,17 @@ void Cluster::update(const double timestep)
     for (size_t i = 0; i < particles.size(); i++) {
         particles.at(i).setState(newStates.at(i));
     }
+}
+
+arma::mat Cluster::getPositionMatrix() const
+{
+    arma::mat res (particles.size(), 3);
+
+    for (arma::uword i = 0; i < particles.size(); i++) {
+        res.row(i) = particles.at(i).pos.t();
+    }
+
+    return res;
 }
 
 std::ostream& operator<<(std::ostream& os, const Cluster& cl)
