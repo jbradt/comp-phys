@@ -12,14 +12,14 @@
 
 int main(const int argc, const char** argv)
 {
-    auto integrator = std::function<decltype(euler)>(euler);
-    Cluster cl (1000, 10, 1, 10, integrator);
+    auto integrator = std::function<decltype(rk4)>(rk4);
+    Cluster cl (100, 10, 1, 20, integrator);
 
-    arma::cube snapshots (1000, 3, 11);
+    arma::cube snapshots (100, 3, 101);
     snapshots.slice(0) = cl.getPositionMatrix();
 
-    for (int i = 1; i < 11; i++) {
-        cl.update(10);
+    for (int i = 1; i < 101; i++) {
+        cl.update(1000);
         snapshots.slice(i) = cl.getPositionMatrix();
     }
 
