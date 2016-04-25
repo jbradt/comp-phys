@@ -22,7 +22,7 @@ public:
 
     void update(const double timestep);
 
-    arma::mat getPositionMatrix() const;
+    arma::mat getStateMatrix() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Cluster& cl);
 
