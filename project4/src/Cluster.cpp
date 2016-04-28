@@ -35,13 +35,15 @@ void Cluster::update(const double timestep)
 
 arma::mat Cluster::getStateMatrix() const
 {
-    arma::mat res (particles.size(), 7);
+    arma::mat res (particles.size(), 9);
 
     for (arma::uword i = 0; i < particles.size(); i++) {
         const auto& p = particles.at(i);
         res(i, arma::span(0, 2)) = p.pos.t();
         res(i, arma::span(3, 5)) = p.vel.t();
         res(i, 6) = p.mass;
+        res(i, 7) = p.findKineticEnergy();
+        res(i, 8) = p.findPotentialEnergy();
     }
 
     return res;

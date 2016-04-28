@@ -19,13 +19,15 @@ public:
 
     arma::vec findNetGravForce(const arma::vec& posVec) const;
     arma::vec findAcceleration(const arma::vec& posVec) const;
+    double findKineticEnergy() const;
+    double findPotentialEnergy() const;
 
     void setState(const State& st);
 
     double mass;
     arma::vec pos;
     arma::vec vel;
-    
+
 private:
     static std::set<Particle*> instances;
 };

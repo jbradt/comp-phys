@@ -40,6 +40,23 @@ arma::vec Particle::findAcceleration(const arma::vec& posVec) const
     return findNetGravForce(posVec) / mass;
 }
 
+double Particle::findKineticEnergy() const
+{
+    return 0.5 * mass * arma::sum(arma::square(vel));
+}
+
+double Particle::findPotentialEnergy() const
+{
+    double potEn = 0;
+
+    for (const Particle* p : instances) {
+        if (p == this) continue;
+        potEn += gravPot(this->pos, this->mass, p->pos, p->mass);
+    }
+
+    return potEn;
+}
+
 void Particle::setState(const State& st)
 {
     pos = st.pos;
