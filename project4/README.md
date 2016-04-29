@@ -20,7 +20,7 @@ This requires CMake, Armadillo, and the [HDF5] library to be installed. (HDF5 is
 Compiling will produce a binary called `cluster` which can be run as
 
 ```bash
-    cluster NUM_PT M_MEAN M_STD R0 DT NUM_ITERS
+cluster NUM_PT M_MEAN M_STD R0 DT NUM_ITERS
 ```
 The parameters used here are:
 - `NUM_PT` - The number of particles to simulate
