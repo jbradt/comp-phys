@@ -76,7 +76,7 @@
 
     I developed a program to simulate this system by repurposing the code from the previous project. \cite{Bradt2016} A system of 500 interacting particles was simulated with a normal initial mass distribution of mean mass $10 m_\sun$ and standard deviation $1 m_\sun$. The initial positions were uniformly distributed inside a sphere of radius \SI{20}{ly}, and the particles started at rest. The simulation progressed with a time step of \SI{0.1}{Ma}.
 
-    Before performing calculations, a value for the parameter $\epsilon$ in (\ref{eq:corrforce}) needed to be found. The value $\epsilon = \SI{0.1}{ly}$ was found by trial and error to be the smallest value that prevented the output from containing discontinuities in particle kinetic energy. This value was used in the remaining calculations discussed in this section.
+    Before performing calculations, a value for the parameter $\epsilon$ in (\ref{eq:corrforce}) was needed. The value $\epsilon = \SI{0.1}{ly}$ was found by trial and error to be the smallest value that prevented the output from containing discontinuities in particle kinetic energy. This value was used in the remaining calculations discussed in this section.
 
     \begin{figure}[p]
         \centering
@@ -90,18 +90,18 @@
     \begin{figure}[p]
         \centering
         \includegraphics{rads.pdf}
-        \caption{Radial positions of the simulated particles.}
+        \caption{Radial positions of the simulated particles. The system collapses around time $t=\SI{5}{Ma}$. The gravitationally unbound particles are shown in red.}
         \label{fig:rads}
     \end{figure}
 
     \begin{figure}[p]
         \centering
         \includegraphics{boundEnergy.pdf}
-        \caption{Kinetic, potential, and total energy of the gravitationally bound particles as a function of time.}
+        \caption{Kinetic, potential, and total energy of the gravitationally bound particles as a function of time. The temporary collapse of the system is visible as a minimum in the system's potential energy.}
         \label{fig:boundEnergy}
     \end{figure}
 
-    The energy of the system is shown in Figure~\ref{fig:boundEnergy} as a function of time. This plot only includes contributions from particles that remained gravitationally bound in the system for the duration of the simulation. Ejected particles identified by looking for particles whose total energy became positive at any point during the simulation. As shown in the figure, the system appears to approach equilibrium after around \SI{50}{Ma}. However, the total energy does appear to be asymptotically approaching zero, which may indicate that particles continue to be ejected even at large times.
+    The energy of the system is shown in Figure~\ref{fig:boundEnergy} as a function of time. This plot only includes contributions from particles that remained gravitationally bound in the system for the duration of the simulation. Ejected particles were identified as particles whose total energy became positive at any point during the simulation. As shown in the figure, the system appears to approach equilibrium after around \SI{50}{Ma}. However, the total energy does appear to be asymptotically approaching zero, which may indicate that particles continue to be ejected even at large times.
 
     According to the virial theorem, if a system is in equilibrium, then
     \begin{equation}
