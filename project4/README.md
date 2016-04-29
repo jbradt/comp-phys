@@ -1,54 +1,56 @@
-# Project 3
+# Project 4
 
-This directory contains the source code and report for the third project.
+This directory contains the source code and report for the fourth project.
 
 ## Compiling
 
 The recommended way to build the code is:
 
 ```bash
-cd /path/to/project3
-git submodule update --init --recursive    # this only needs to be done once
+cd /path/to/project4
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 ```
 
-This requires CMake and Armadillo to be installed. The project also depends on [yaml-cpp](https://github.com/jbeder/yaml-cpp) for parsing config files, but this will be downloaded automatically by the `git submodule update --init --recursive` function above, and will be built automatically by CMake.
+This requires CMake, Armadillo, and the [HDF5] library to be installed. (HDF5 is used for output.)
 
 ## Running
 
-Compiling will produce a binary called `solar` which can be run as
+Compiling will produce a binary called `cluster` which can be run as
 
 ```bash
-    solar CONFIG_PATH
+    cluster NUM_PT M_MEAN M_STD R0 DT NUM_ITERS
 ```
-where `CONFIG_PATH` is the path to a YAML config file like in the `configs` directory. The program will output a CSV file for each body defined in the config file. The CSV file has the columns `(x, y, z, vx, vy, vz)` if the position is specified in 3D, or `(x, y, vx, vy)` if it is given in 2D.
+The parameters used here are:
+- `NUM_PT` - The number of particles to simulate
+- `M_MEAN` - The mean of the normal mass distribution, in solar masses
+- `M_STD` - The standard deviation of the normal mass distribution, in solar masses
+- `R0` - The radius of the uniform distribution of initial positions, in light-years
+- `DT` - The time step, in years
+- `NUM_ITERS` - The number of time steps to simulate
 
-## Configs
+The program will output a file in the [HDF5] format. Specifically, the data is written using Armadillo's `save` function with the format flag `arma::hdf5_binary`. This creates a dataset called "dataset" within the file, with axes [iteration, variable, particle number]. The variables written (the second axis) are [x, y, z, vx, vy, vz, mass, kinetic energy, potential energy].
 
-The `configs` directory contains a few config files that were used to produce the results shown in the report. These are in the [YAML](https://en.wikipedia.org/wiki/YAML) language. The basic format is:
-
-```yaml
----
-timestep: 1.0    # Time step in days
-num_iters: 1460  # Number of time steps to run
-integrator: rk4  # One of euler, verlet, or rk4. Case-sensitive.
-
-planets:
-    - name: Earth            # Name of the planet / other body
-      mass: 3.0e-6           # Mass in units of solar mass
-      position: [1.0, 0]     # Position in au. Can be 2D or 3D.
-      velocity: [0, 0.0243]  # Velocity in au/d. Can be 2D or 3D.
-      fixed: False           # Optional. If True, the body is not allowed to move.
-
-    # And more entries for other planets...
+The data can be read in Python with the `h5py` package by doing, for example,
+```python
+with h5py.File('/path/to/result.h5') as f:
+    data = f['dataset'][:]  # This reads the full dataset into memory
+pos = data[:, :3]
+kine = data[:, 7]
+pot = data[:, 8]
 ```
 
 ## Sample outputs
 
-Outputs for each config file in the `configs` directory can be found in the `outputs` directory.
+Due to the large size of the output files, I have not included one in this repository. However, the plots in the final report were created from data run with the following call to the program:
+```bash
+cluster 500 10 1 20 100000 2000
+```
+Naturally, every run will produce slightly different output due to the use of random numbers.
 
 ## Report
 
-The final report is in the file `writeup/project3.pdf`.
+The final report is in the file `writeup/project4.pdf`. Please excuse the horrible layout as LaTeX was not pleased with the number of plots I included.
+
+[HDF5]: https://www.hdfgroup.org/HDF5/
