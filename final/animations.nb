@@ -1,0 +1,165 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      4916,        156]
+NotebookOptionsPosition[      4328,        133]
+NotebookOutlinePosition[      4684,        149]
+CellTagsIndexPosition[      4641,        146]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+  "datadir", "=", 
+   "\"\</Users/josh/Documents/Code/comp-phys/project3/build/release/\>\""}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.6711310067983093`*^9, 3.671131070131104*^9}, {
+  3.671131109084187*^9, 3.6711311139705057`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"planets", "=", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Import", "[", 
+      RowBox[{"datadir", "<>", "#", "<>", "\"\<.csv\>\""}], "]"}], "&"}], "/@", 
+    RowBox[{"AstronomicalData", "[", "\"\<Planet\>\"", "]"}]}]}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.6711311201764812`*^9, 3.671131140138513*^9}, {
+   3.671131171271296*^9, 3.6711311766219482`*^9}, {3.6711312071986103`*^9, 
+   3.671131250470367*^9}, 3.67113128570393*^9}],
+
+Cell[BoxData[
+ RowBox[{"ListPlot", "[", 
+  RowBox[{"planets", "[", 
+   RowBox[{"[", 
+    RowBox[{"3", ",", "All", ",", 
+     RowBox[{"1", ";;", "2"}]}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.6711312911728907`*^9, 3.67113136880989*^9}}],
+
+Cell[BoxData[
+ RowBox[{"planets", "[", 
+  RowBox[{"[", 
+   RowBox[{"All", ",", "1", ",", 
+    RowBox[{"1", ";;", "2"}]}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.6711315003434973`*^9, 3.671131509469636*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"planets", "[", 
+   RowBox[{"[", 
+    RowBox[{
+     RowBox[{"-", "1"}], ",", "All", ",", 
+     RowBox[{"1", ";;", "2"}]}], "]"}], "]"}], "//", "Max"}]], "Input",
+ CellChangeTimes->{{3.671132727324965*^9, 3.671132751700428*^9}}],
+
+Cell[BoxData[
+ RowBox[{"drawSystem", ":=", 
+  RowBox[{
+   RowBox[{"Graphics", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"Disk", "[", 
+        RowBox[{"#", ",", "0.5"}], "]"}], "&"}], "/@", "#"}], ",", 
+     RowBox[{"PlotRange", "\[Rule]", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"-", "30"}], ",", "30"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"-", "30"}], ",", "30"}], "}"}]}], "}"}]}]}], "]"}], 
+   "&"}]}]], "Input",
+ CellChangeTimes->{{3.671132092040968*^9, 3.671132167912331*^9}, {
+  3.671132360928711*^9, 3.67113236154163*^9}, {3.671132431427298*^9, 
+  3.671132434447878*^9}, {3.6711326843767147`*^9, 3.671132709871614*^9}, {
+  3.671132755550378*^9, 3.671132760273333*^9}}],
+
+Cell[BoxData[
+ RowBox[{"drawSystem", "[", 
+  RowBox[{"planets", "[", 
+   RowBox[{"[", 
+    RowBox[{"All", ",", "1", ",", 
+     RowBox[{"1", ";;", "2"}]}], "]"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.671132171738652*^9, 3.671132199297206*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Dimensions", "@", 
+  RowBox[{"Transpose", "[", 
+   RowBox[{"planets", "[", 
+    RowBox[{"[", 
+     RowBox[{"All", ",", 
+      RowBox[{"1", ";;", "10"}], ",", 
+      RowBox[{"1", ";;", "2"}]}], "]"}], "]"}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.671132273475795*^9, 3.671132275547988*^9}, {
+  3.671132553117099*^9, 3.671132555427187*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ListAnimate", "[", 
+  RowBox[{"drawSystem", "/@", 
+   RowBox[{"Transpose", "@", 
+    RowBox[{"planets", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", 
+       RowBox[{";;", ";;", "10"}], ",", 
+       RowBox[{"1", ";;", "2"}]}], "]"}], "]"}]}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.671131838878437*^9, 3.6711318870565443`*^9}, {
+  3.671131952010508*^9, 3.6711319972148533`*^9}, {3.671132209493765*^9, 
+  3.671132232001954*^9}, {3.671132318142871*^9, 3.6711323909348917`*^9}, {
+  3.6711325800880003`*^9, 3.6711326430377893`*^9}, {3.6711327820126553`*^9, 
+  3.671132782137682*^9}, {3.6711328179338303`*^9, 3.6711328180188723`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"p", ",", 
+   RowBox[{"planets", "[", 
+    RowBox[{"[", 
+     RowBox[{"3", ",", 
+      RowBox[{";;", "10"}], ",", 
+      RowBox[{"1", ";;", "2"}]}], "]"}], "]"}]}], "}"}]], "Input"]
+},
+WindowSize->{808, 911},
+WindowMargins->{{Automatic, 166}, {Automatic, 219}},
+FrontEndVersion->"10.0 for Mac OS X x86 (32-bit, 64-bit Kernel) (June 27, \
+2014)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 269, 7, 28, "Input"],
+Cell[830, 29, 464, 11, 28, "Input"],
+Cell[1297, 42, 250, 6, 28, "Input"],
+Cell[1550, 50, 213, 5, 28, "Input"],
+Cell[1766, 57, 261, 7, 28, "Input"],
+Cell[2030, 66, 787, 22, 28, "Input"],
+Cell[2820, 90, 251, 6, 28, "Input"],
+Cell[3074, 98, 364, 9, 28, "Input"],
+Cell[3441, 109, 660, 13, 28, "Input"],
+Cell[4104, 124, 220, 7, 28, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)
